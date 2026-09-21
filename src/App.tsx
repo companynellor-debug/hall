@@ -1,122 +1,83 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useCallback, useState } from 'react'
+import { ChatPane } from './components/ChatPane'
+import { ConsolePane } from './components/ConsolePane'
+import { EditorPane } from './components/EditorPane'
+import { MenuBar } from './components/MenuBar'
+import { PreviewPane } from './components/PreviewPane'
+import { Resizer } from './components/Resizer'
+import { Sidebar } from './components/Sidebar'
+import { StatusBar } from './components/StatusBar'
+import { fileTree, type RailId } from './data/workspace'
 
-function App() {
-  const [count, setCount] = useState(0)
+const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v))
+
+export default function App() {
+  const [rail, setRail] = useState<RailId>('explorer')
+  const [tabs, setTabs] = useState<string[]>(['src/Home.tsx'])
+  const [activePath, setActivePath] = useState('src/Home.tsx')
+  const [editorH, setEditorH] = useState(340)
+  const [rightW, setRightW] = useState(420)
+  const [consoleH, setConsoleH] = useState(180)
+  const [explorerW, setExplorerW] = useState(230)
+
+  const openFile = useCallback((path: string) => {
+    setTabs((t) => (t.includes(path) ? t : [...t, path]))
+    setActivePath(path)
+  }, [])
+
+  const closeTab = useCallback(
+    (path: string) => {
+      const idx = tabs.indexOf(path)
+      const next = tabs.filter((p) => p !== path)
+      setTabs(next)
+      if (activePath === path) {
+        setActivePath(next[Math.min(idx, next.length - 1)] ?? '')
+      }
+    },
+    [tabs, activePath],
+  )
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app">
+      <MenuBar />
 
-      <div className="ticks"></div>
+      <div className="app-body">
+        <Sidebar
+          active={rail}
+          onSelect={setRail}
+          activePath={activePath}
+          tree={{ root: fileTree, open: openFile }}
+          width={explorerW}
+        />
+        <Resizer axis="x" onDelta={(d) => setExplorerW((w) => clamp(w + d, 180, 320))} />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="center">
+          <div className="editor" style={{ height: editorH }}>
+            <EditorPane
+              tabs={tabs}
+              activePath={activePath}
+              onSelect={setActivePath}
+              onClose={closeTab}
+            />
+          </div>
+          <Resizer axis="y" onDelta={(d) => setEditorH((h) => clamp(h + d, 160, 640))} />
+          <ChatPane />
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
+        <Resizer axis="x" onDelta={(d) => setRightW((w) => clamp(w - d, 300, 760))} />
+
+        <div className="right-col" style={{ width: rightW }}>
+          <div className="preview">
+            <PreviewPane />
+          </div>
+          <Resizer axis="y" onDelta={(d) => setConsoleH((h) => clamp(h - d, 120, 400))} />
+          <div className="console" style={{ height: consoleH }}>
+            <ConsolePane />
+          </div>
+        </div>
+      </div>
+
+      <StatusBar />
+    </div>
   )
 }
-
-export default App
