@@ -203,10 +203,6 @@ export function ChatPane() {
           </button>
         </div>
       </div>
-
-      <div className="chat-context">
-        Contexto: <b>hall-workspace</b> · Ctrl+Enter para enviar
-      </div>
     </section>
   )
 }
