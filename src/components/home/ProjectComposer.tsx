@@ -6,6 +6,7 @@ import { ImportGithub } from './ImportGithub';
 
 interface ProjectComposerProps {
   onSubmit: (description: string) => void;
+  onImportGithub: (url: string) => void;
   disabled?: boolean;
 }
 
@@ -20,7 +21,7 @@ const MODELS = [
   { value: 'hall-pro', label: 'HALL Pro', icon: 'zap' },
 ] as const;
 
-export function ProjectComposer({ onSubmit, disabled = false }: ProjectComposerProps) {
+export function ProjectComposer({ onSubmit, onImportGithub, disabled = false }: ProjectComposerProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [description, setDescription] = useState('');
   const [selectedProject, setSelectedProject] = useState<'nakor-project' | 'new-project'>('nakor-project');
@@ -112,7 +113,7 @@ export function ProjectComposer({ onSubmit, disabled = false }: ProjectComposerP
           <Icon name="plus" size={16} />
           Novo projeto
         </Button>
-        <ImportGithub onImport={(url) => console.log('import', url)} />
+        <ImportGithub onImport={onImportGithub} />
       </div>
     </form>
   );

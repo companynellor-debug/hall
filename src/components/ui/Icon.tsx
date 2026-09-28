@@ -8,7 +8,7 @@ export type IconName =
   | 'server' | 'globe' | 'terminal' | 'zap' | 'shield'
   | 'star' | 'heart' | 'menu' | 'more-horizontal' | 'more-vertical'
   | 'mic' | 'cpu' | 'arrow-right' | 'sparkles' | 'message-square'
-  | 'bar-chart' | 'users' | 'cube';
+  | 'bar-chart' | 'users' | 'cube' | 'download';
 
 const icons: Record<IconName, (props: SVGProps<SVGSVGElement>) => JSX.Element> = {
   github: (props) => (
@@ -251,6 +251,13 @@ const icons: Record<IconName, (props: SVGProps<SVGSVGElement>) => JSX.Element> =
       <path d="M2 12l10 5 10-5" />
     </svg>
   ),
+  download: (props) => (
+    <svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+      <polyline points="7 10 12 15 17 10" />
+      <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  ),
 };
 
 interface IconProps extends SVGProps<SVGSVGElement> {
@@ -264,5 +271,5 @@ export function Icon({ name, size = 18, className = '', ...props }: IconProps) {
     console.warn(`Icon "${name}" not found`);
     return null;
   }
-  return <Component {...props} width={size} height={size} className={className} aria-hidden="true" strokeWidth={1.5} />;
+  return <Component {...props} width={size} height={size} className={className} aria-hidden="true" />;
 }

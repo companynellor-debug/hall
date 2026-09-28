@@ -1,6 +1,5 @@
 import { useRef, useState, useCallback, useEffect } from 'react';
 import { Textarea } from '../ui/Textarea';
-import { Button } from '../ui/Button';
 import { Icon } from '../ui/Icon';
 import { ImportGithub } from './ImportGithub';
 import { OrbitingCirclesGlobe } from './OrbitingCirclesGlobe';
@@ -21,7 +20,7 @@ const MODELS = [
   { value: 'hall-pro', label: 'HALL Pro', icon: 'zap' },
 ] as const;
 
-export function HallHero({ onSubmit }: { onSubmit: (desc: string) => void }) {
+export function HallHero({ onSubmit, onImportGithub }: { onSubmit: (desc: string) => void; onImportGithub: (url: string) => void }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [description, setDescription] = useState('');
   const [selectedModel, setSelectedModel] = useState<'auto' | 'hall-core' | 'hall-pro'>('auto');
@@ -104,26 +103,19 @@ export function HallHero({ onSubmit }: { onSubmit: (desc: string) => void }) {
 
         <div className="composer-footer">
           <div className="composer-actions">
-            <Button type="button" variant="ghost" size="sm" className="attach-btn" aria-label="Attach files">
-              <Icon name="paperclip" size={16} />
-              <span>Attach</span>
-            </Button>
-
             <div className="model-select-wrapper">
               <button
                 type="button"
-                className="model-select-btn"
+                className="model-select-btn fluid-glass"
                 onClick={() => setModelMenuOpen(!modelMenuOpen)}
                 aria-expanded={modelMenuOpen}
                 aria-haspopup="listbox"
-                aria-label="Select model"
+                aria-label="Configurar projeto"
               >
-                <Icon name={selectedModel === 'auto' ? 'mic' : selectedModel === 'hall-core' ? 'cpu' : 'zap'} size={14} />
-                <span>{MODELS.find(m => m.value === selectedModel)?.label || 'Auto'}</span>
-                <Icon name="chevron-down" size={12} />
+                <Icon name="more-vertical" size={18} />
               </button>
               {modelMenuOpen && (
-                <ul className="model-menu" role="listbox" aria-label="Select model">
+                <ul className="model-menu" role="listbox" aria-label="Configurar projeto">
                   {MODELS.map((m) => (
                     <li key={m.value} role="option" aria-selected={selectedModel === m.value} onClick={() => { setSelectedModel(m.value as 'auto' | 'hall-core' | 'hall-pro'); setModelMenuOpen(false); }}>
                       <Icon name={m.icon} size={14} />
@@ -134,13 +126,17 @@ export function HallHero({ onSubmit }: { onSubmit: (desc: string) => void }) {
               )}
             </div>
 
-            <ImportGithub onImport={(url) => console.log('import', url)} />
+            <ImportGithub onImport={onImportGithub} />
           </div>
 
-          <Button type="submit" variant="primary" size="lg" disabled={!description.trim()} className="build-btn">
-            <span>Build</span>
+          <button
+            type="submit"
+            className="build-btn fluid-glass"
+            disabled={!description.trim()}
+            aria-label="Enviar prompt"
+          >
             <Icon name="arrow-right" size={18} />
-          </Button>
+          </button>
         </div>
       </form>
       <OrbitingCirclesGlobe />

@@ -32,10 +32,14 @@ export function ImportGithub({ onImport }: ImportGithubProps) {
 
   return (
     <>
-      <Button variant="secondary" size="md" onClick={openModal}>
-        <Icon name="github" size={16} />
-        Importar do GitHub
-      </Button>
+      <button
+        type="button"
+        className="github-btn fluid-glass"
+        onClick={openModal}
+        aria-label="Importar do GitHub"
+      >
+        <Icon name="download" size={20} />
+      </button>
 
       <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setError(''); setUrl(''); }} title="Importar do GitHub" size="md">
         <form onSubmit={handleSubmit}>

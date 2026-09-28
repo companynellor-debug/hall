@@ -15,7 +15,7 @@ interface Orbit {
 
 const orbits: Orbit[] = [
   {
-    size: { width: 300, height: 300 },
+    size: { width: 250, height: 250 },
     duration: 18,
     icons: [
       { src: 'https://cdn.21st.dev/assets/mirror/27/279f60ffd95d6d6e982c0d9544f465b21ba7895d2a7ba9dc2ea798f0aad31074.svg', alt: 'Supabase', angle: -60 },
@@ -24,7 +24,7 @@ const orbits: Orbit[] = [
     ],
   },
   {
-    size: { width: 420, height: 420 },
+    size: { width: 350, height: 350 },
     duration: 24,
     icons: [
       { src: 'https://cdn.21st.dev/assets/mirror/cd/cdf9d8e18269a990e7854c0255d64513e5f8b6052b8580dd8f24480a85ec130a.svg', alt: 'Figma', angle: -90 },
@@ -32,7 +32,7 @@ const orbits: Orbit[] = [
     ],
   },
   {
-    size: { width: 560, height: 560 },
+    size: { width: 450, height: 450 },
     duration: 30,
     icons: [
       { src: 'https://cdn.21st.dev/assets/mirror/b5/b58af96de173670c64254e6d93ca4e4daf57b2637cc4fb90529f3232ea1bdf3f.svg', alt: 'Claude', angle: -60 },
@@ -83,8 +83,8 @@ const particleGlobeStyle: React.CSSProperties = {
   transform: 'translateX(-50%) translateY(50%)',
   aspectRatio: '1 / 1',
   pointerEvents: 'none',
-  width: '120px',
-  maxWidth: '200px',
+  width: '100px',
+  maxWidth: '150px',
   zIndex: 10,
 };
 
@@ -92,7 +92,7 @@ const containerStyle: React.CSSProperties = {
   position: 'relative',
   width: '100%',
   maxWidth: '720px',
-  height: '300px',
+  height: '250px',
   overflow: 'visible',
   display: 'flex',
   justifyContent: 'center',
