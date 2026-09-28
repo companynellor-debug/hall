@@ -16,7 +16,7 @@ function App() {
 
   const handleImportGithub = (url: string) => {
     // Extract repo name from URL
-    const match = url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+    const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
     const repoName = match ? match[2].replace(/\.git$/, '') : 'Imported Project';
     setProjectName(repoName);
     setView('workspace');
