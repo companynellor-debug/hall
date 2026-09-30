@@ -37,6 +37,11 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
   - Ícone de configurações (engrenagem) corrigido — path estava quebrado.
   - Placeholder do composer suavizado (opacity 0.45, cor muted, peso 400) para não parecer digitação real.
   - Campo do chat redimensionado estilo Lovable (max-width 768px, min-height 120px) mantendo o formato.
+- [2026-06] Rodada 3 de UI:
+  - Logo animada: coelhinho com micro-animação de "pulo/balanço" (`@keyframes hallHop`), pausa no hover.
+  - Fluxo de import estilo Emergent (`ImportGithub.tsx`): passo 1 "Conectar conta do GitHub" → passo 2 lista de repositórios com busca, badge público/privado, linguagem, stars e data. Conexão e lista de repos são **MOCKADAS** (sem OAuth real do GitHub); inclui fallback de URL manual.
+  - Header (lado direito) redesenhado: seletor de modelo virou pill de vidro e avatar com anel/gradiente premium.
+  - Otimização responsiva: breakpoints tablet (≤1024), mobile (≤768), telefones pequenos (≤420) e landscape; footer do composer em linha única no mobile, `home-main` rolável, globo em órbita escalado; sem overflow horizontal (390=390).
 
 ## Backlog (a definir com o usuário)
 - P1: Corrigir bugs (a especificar)

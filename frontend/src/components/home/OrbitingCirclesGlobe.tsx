@@ -137,6 +137,7 @@ export function OrbitingCirclesGlobe() {
   return (
     <div
       ref={containerRef}
+      className="orbit-globe"
       style={containerStyle}
     >
       {/* Center particle globe */}
