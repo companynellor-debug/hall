@@ -43,6 +43,12 @@ export function ImportGithub({ onImport }: ImportGithubProps) {
 
       <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setError(''); setUrl(''); }} title="Importar do GitHub" size="md">
         <form onSubmit={handleSubmit}>
+          <div className="github-modal-hero">
+            <div className="github-modal-badge fluid-glass">
+              <Icon name="github" size={30} />
+            </div>
+            <p className="github-modal-sub">Cole a URL de um repositório público para importá-lo no HALL.</p>
+          </div>
           <div className="input-wrapper" style={{marginBottom:'var(--space-4)'}}>
             <label htmlFor="github-url" className="input-label">URL do Repositório</label>
             <input

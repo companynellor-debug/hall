@@ -1,12 +1,12 @@
 import { Icon } from '../ui/Icon';
+import hallLogo from '../../assets/hall-logo.png';
 
 export function HomeHeader() {
   return (
     <header className="home-header" role="banner">
       <div className="home-header-left">
         <div className="home-logo" aria-label="HALL">
-          <Icon name="zap" size={24} className="home-logo-icon" />
-          <span className="home-logo-wordmark">HALL</span>
+          <img src={hallLogo} alt="HALL" className="home-logo-img" />
         </div>
       </div>
       <div className="home-header-right">

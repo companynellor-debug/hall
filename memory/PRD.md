@@ -29,6 +29,14 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
   - Botão de import agora exibe o ícone do GitHub (`ImportGithub.tsx`); corrigido bug de padding herdado que colapsava o SVG para 0px de largura.
   - Adicionado botão "+" (liquid glass) antes do botão de 3 pontinhos no composer (`HallHero.tsx`).
   - Ícones do menu lateral maiores (22px) com brilho de destaque vermelho em liquid glass no hover.
+- [2026-06] Rodada 2 de UI:
+  - Logo: adicionada a imagem do coelhinho pixel (`assets/hall-logo.png`, fundo branco removido para transparente); topo agora mostra só a logo (removidos ícone de raio + texto "HALL").
+  - Ícone do GitHub trocado pela logo oficial (octocat preenchido) em `Icon.tsx`.
+  - Efeito "resina/liquid glass" adicionado a todos os botões `.fluid-glass` via reflexo especular (`::before`).
+  - Modal de importar repositório redesenhado estilo Emergent (glass, backdrop blur, badge do GitHub, input glassy maior).
+  - Ícone de configurações (engrenagem) corrigido — path estava quebrado.
+  - Placeholder do composer suavizado (opacity 0.45, cor muted, peso 400) para não parecer digitação real.
+  - Campo do chat redimensionado estilo Lovable (max-width 768px, min-height 120px) mantendo o formato.
 
 ## Backlog (a definir com o usuário)
 - P1: Corrigir bugs (a especificar)
