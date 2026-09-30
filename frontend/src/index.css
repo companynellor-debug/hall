@@ -961,18 +961,18 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 }
 
 .home-logo-img {
-  height: 40px;
+  height: 56px;
   width: auto;
   display: block;
   image-rendering: pixelated;
-  filter: drop-shadow(0 0 14px rgba(229, 57, 53, 0.45));
+  filter: drop-shadow(0 0 18px rgba(229, 57, 53, 0.6)) drop-shadow(0 4px 10px rgba(0, 0, 0, 0.45));
   transform-origin: center bottom;
   animation: hallHop 4.5s ease-in-out infinite;
   transition: filter var(--transition-fast);
 }
 
 .home-logo-img:hover {
-  filter: drop-shadow(0 0 22px rgba(229, 57, 53, 0.7));
+  filter: drop-shadow(0 0 28px rgba(229, 57, 53, 0.85)) drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
   animation-play-state: paused;
 }
 
@@ -1485,7 +1485,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
     display: none;
   }
 
-  .home-logo-img { height: 34px; }
+  .home-logo-img { height: 46px; }
 
   .home-main {
     height: auto;
