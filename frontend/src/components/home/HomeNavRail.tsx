@@ -28,7 +28,7 @@ export function HomeNavRail() {
             aria-label={item.label}
             title={item.label}
           >
-            <Icon name={item.name} size={20} />
+            <Icon name={item.name} size={22} />
           </button>
         ))}
       </div>

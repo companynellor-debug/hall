@@ -38,7 +38,7 @@ export function ImportGithub({ onImport }: ImportGithubProps) {
         onClick={openModal}
         aria-label="Importar do GitHub"
       >
-        <Icon name="download" size={20} />
+        <Icon name="github" size={20} />
       </button>
 
       <Modal isOpen={modalOpen} onClose={() => { setModalOpen(false); setError(''); setUrl(''); }} title="Importar do GitHub" size="md">

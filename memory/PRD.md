@@ -24,6 +24,11 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 
 ## Status atual (implementado)
 - [2026-06] Repositório importado e adaptado ao ambiente; frontend rodando (Vite v8) na porta 3000, backend placeholder rodando na 8001. UI carrega corretamente.
+- [2026-06] Ajustes de UI na home:
+  - Grain (textura áspera) confinado ao fundo via máscara radial no canvas (`Background.tsx`) — não aparece mais atrás do campo de chat, do elemento 3D, do título nem da órbita.
+  - Botão de import agora exibe o ícone do GitHub (`ImportGithub.tsx`); corrigido bug de padding herdado que colapsava o SVG para 0px de largura.
+  - Adicionado botão "+" (liquid glass) antes do botão de 3 pontinhos no composer (`HallHero.tsx`).
+  - Ícones do menu lateral maiores (22px) com brilho de destaque vermelho em liquid glass no hover.
 
 ## Backlog (a definir com o usuário)
 - P1: Corrigir bugs (a especificar)

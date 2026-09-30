@@ -41,7 +41,18 @@ const Noise: React.FC<NoiseProps> = ({ patternAlpha = 15 }) => {
   return (
     <canvas
       ref={grainRef}
-      style={{ position: 'absolute', inset: 0, pointerEvents: 'none', imageRendering: 'pixelated' }}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        pointerEvents: 'none',
+        imageRendering: 'pixelated',
+        // Keep the grain strictly on the outer background — fade it fully out
+        // behind the central content (3D sphere, title, chat field, orbit).
+        WebkitMaskImage:
+          'radial-gradient(ellipse 56% 84% at 50% 46%, transparent 40%, #000 86%)',
+        maskImage:
+          'radial-gradient(ellipse 56% 84% at 50% 46%, transparent 40%, #000 86%)',
+      }}
     />
   );
 };

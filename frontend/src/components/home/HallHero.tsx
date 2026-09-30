@@ -110,6 +110,16 @@ export function HallHero({ onSubmit, onImportGithub }: { onSubmit: (desc: string
 
         <div className="composer-footer">
           <div className="composer-actions">
+            <button
+              type="button"
+              className="new-chat-btn fluid-glass"
+              onClick={() => { setDescription(''); textareaRef.current?.focus(); }}
+              aria-label="Novo projeto"
+              title="Novo projeto"
+            >
+              <Icon name="plus" size={18} />
+            </button>
+
             <div className="model-select-wrapper">
               <button
                 type="button"

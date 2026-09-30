@@ -1176,6 +1176,35 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
   color: var(--color-text-primary);
 }
 
+/* New project (+) button */
+.new-chat-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.new-chat-btn.fluid-glass {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.new-chat-btn.fluid-glass:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
+  transform: translateY(-1px);
+}
+
 .model-menu {
   position: absolute;
   top: calc(100% + var(--space-2));
@@ -1223,6 +1252,8 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
   justify-content: center;
   width: 40px;
   height: 40px;
+  padding: 0;
+  gap: 0;
   border-radius: var(--radius-md);
   color: var(--color-text-secondary);
   background: transparent;
@@ -1386,10 +1417,11 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 }
 
 .nav-rail-item:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  color: var(--color-text-primary);
+  background: rgba(229, 57, 53, 0.12);
+  border-color: rgba(229, 57, 53, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 18px rgba(229, 57, 53, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: var(--color-accent);
+  transform: translateY(-1px);
 }
 
 .nav-rail-spacer {
@@ -1415,10 +1447,10 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 }
 
 .nav-rail-toggle:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  color: var(--color-text-primary);
+  background: rgba(229, 57, 53, 0.12);
+  border-color: rgba(229, 57, 53, 0.35);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), 0 0 18px rgba(229, 57, 53, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: var(--color-accent);
 }
 
 .nav-rail-menu {
