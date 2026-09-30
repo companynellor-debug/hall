@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { HomeScreen } from './components/home/HomeScreen';
 import { ProjectWorkspace } from './components/ProjectWorkspace';
+import Background from './components/ui/Background';
 import './index.css';
 
 type View = 'home' | 'workspace';
@@ -31,6 +32,7 @@ function App() {
 
   return (
     <div className="app">
+      <Background />
       {view === 'home' ? (
         <HomeScreen onCreate={handleCreateProject} onImportGithub={handleImportGithub} />
       ) : (

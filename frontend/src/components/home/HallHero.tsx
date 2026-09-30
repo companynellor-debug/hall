@@ -24,42 +24,49 @@ export function HallHero({ onSubmit, onImportGithub }: { onSubmit: (desc: string
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [description, setDescription] = useState('');
   const [selectedModel, setSelectedModel] = useState<'auto' | 'hall-core' | 'hall-pro'>('auto');
-  const [placeholderIndex, setPlaceholderIndex] = useState(0);
-  const [displayText, setDisplayText] = useState('');
-  const [isDeleting, setIsDeleting] = useState(false);
   const [modelMenuOpen, setModelMenuOpen] = useState(false);
-  const frameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
-  const lastTimeRef = useRef<number>(0);
 
-  // Typewriter animation for placeholder
+  // Typewriter placeholder — driven via ref (no React re-renders, keeps the composer light & responsive)
   useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.placeholder = PLACEHOLDERS[0];
+      return;
+    }
+
+    let rafId = 0;
+    let last = 0;
+    let phIndex = 0;
+    let charLen = 0;
+    let deleting = false;
+
     const animate = (time: number) => {
-      const currentPlaceholder = PLACEHOLDERS[placeholderIndex];
-      const speed = isDeleting ? 30 : 50;
+      const current = PLACEHOLDERS[phIndex];
+      const speed = deleting ? 30 : 55;
+      const pause = 1200;
 
-      if (time - lastTimeRef.current >= speed) {
-        lastTimeRef.current = time;
-
-        if (!isDeleting && displayText.length < currentPlaceholder.length) {
-          setDisplayText(currentPlaceholder.slice(0, displayText.length + 1));
-        } else if (isDeleting && displayText.length > 0) {
-          setDisplayText(displayText.slice(0, -1));
-        } else if (!isDeleting && displayText === currentPlaceholder) {
-          setIsDeleting(true);
-        } else if (isDeleting && displayText === '') {
-          setIsDeleting(false);
-          setPlaceholderIndex((prev) => (prev + 1) % PLACEHOLDERS.length);
+      if (time - last >= (charLen === current.length && !deleting ? pause : speed)) {
+        last = time;
+        if (!deleting && charLen < current.length) {
+          charLen++;
+        } else if (!deleting && charLen === current.length) {
+          deleting = true;
+        } else if (deleting && charLen > 0) {
+          charLen--;
+        } else {
+          deleting = false;
+          phIndex = (phIndex + 1) % PLACEHOLDERS.length;
         }
+        // update the DOM placeholder only when the field is empty (don't fight user input)
+        if (!el.value) el.placeholder = current.slice(0, charLen);
       }
-
-      frameRef.current = requestAnimationFrame(animate);
+      rafId = requestAnimationFrame(animate);
     };
 
-    frameRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-    };
-  }, [displayText, isDeleting, placeholderIndex]);
+    rafId = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(rafId);
+  }, []);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +102,7 @@ export function HallHero({ onSubmit, onImportGithub }: { onSubmit: (desc: string
           ref={textareaRef}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder={displayText || PLACEHOLDERS[0]}
+          placeholder={PLACEHOLDERS[0]}
           rows={5}
           aria-label="Project description"
           className="composer-textarea"

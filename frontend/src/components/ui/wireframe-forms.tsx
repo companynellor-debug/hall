@@ -475,7 +475,7 @@ const wireframeFormsDefinition: EffectDefinition = {
   title: "Wireframe Forms",
   source: wireframeFormsHtml,
   supportsMode: true,
-  background: (mode) => (mode === "light" ? LIGHT_PAPER : "#050505"),
+  background: (mode) => (mode === "light" ? LIGHT_PAPER : "transparent"),
   targets: [{ selector: "main", role: "ui", width: "1040px" }],
   focusCss: `
 main {
