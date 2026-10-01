@@ -1682,10 +1682,22 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
   width: calc(100% - 64px);
 }
 
-/* Responsive */
+/* Responsive — show the nav rail on mobile as a floating menu */
 @media (max-width: 768px) {
   .home-nav-rail {
-    display: none;
+    display: flex;
+    top: calc(64px + var(--space-3));
+    bottom: auto;
+    left: var(--space-2);
+    width: auto;
+    height: auto;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    z-index: 60;
   }
   .home-main {
     margin-left: 0;
