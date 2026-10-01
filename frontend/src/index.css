@@ -1515,7 +1515,6 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     padding: calc(64px + var(--space-5)) var(--space-4) var(--space-8);
-    margin-left: 0;
   }
   .home-main::after { display: none; }
 
@@ -1682,25 +1681,9 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
   width: calc(100% - 64px);
 }
 
-/* Responsive — show the nav rail on mobile as a floating menu */
+/* Responsive — keep the nav rail like desktop on mobile (fixed left bar from the top) */
 @media (max-width: 768px) {
   .home-nav-rail {
     display: flex;
-    top: calc(64px + var(--space-3));
-    bottom: auto;
-    left: var(--space-2);
-    width: auto;
-    height: auto;
-    padding: 0;
-    background: transparent;
-    border: none;
-    box-shadow: none;
-    -webkit-backdrop-filter: none;
-    backdrop-filter: none;
-    z-index: 60;
-  }
-  .home-main {
-    margin-left: 0;
-    width: 100%;
   }
 }
