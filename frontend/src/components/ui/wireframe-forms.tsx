@@ -630,7 +630,7 @@ function NeuformBatchEffect({
         }
         initSphere() {
           const t = (1.0 + Math.sqrt(5.0)) / 2.0;
-          const s = ${Math.round(50 * safeLength)};
+          const s = Math.max(12, Math.round(Math.min(this.width, this.height) * 0.24 * ${safeLength}));
           const p = [
             [-1,  t,  0], [ 1,  t,  0], [-1, -t,  0], [ 1, -t,  0],
             [ 0, -1,  t], [ 0,  1,  t], [ 0, -1, -t], [ 0,  1, -t],
@@ -689,7 +689,14 @@ function NeuformBatchEffect({
           requestAnimationFrame(() => this.animate());
         }
       }
-      window.addEventListener('resize', () => { if(window.__engine) window.__engine.resize(); });
+      window.addEventListener('resize', () => {
+        if (window.__engine) {
+          window.__engine.resize();
+          window.__engine.points = [];
+          window.__engine.edges = [];
+          window.__engine.initSphere();
+        }
+      });
       window.__engine = new WireframeEngine('${canvasId}');
     `;
     return `<!DOCTYPE html>
