@@ -47,3 +47,5 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 - P1: Corrigir bugs (a especificar)
 - P1: Adicionar novas funcionalidades (a especificar)
 - P2: Ligar backend real / persistência se necessário
+
+- [2026-06] Bug fix: elemento wireframe (esfera) do topo estava cortado em mobile/tablet (tamanho fixo s=50 num container que encolhe). Corrigido tornando o raio proporcional ao container em wireframe-forms.tsx (initSphere + rebuild no resize). Verificado pelo testing_agent (5 viewports, 100% sem corte). Também corrigido overflow horizontal de 64px (home-main tinha width:100% + margin-left:64px) -> width calc(100%-64px); overflow agora 0 em 1920/820/390.

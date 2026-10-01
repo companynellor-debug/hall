@@ -1,0 +1,34 @@
+{
+  "summary": "Frontend-only visual verification of HALL home-screen wireframe sphere across 5 viewports (desktop 1920x900, tablet 820x1180 & 768x1024, mobile 390x844 & 360x740). Inspected the iframe>canvas pixel-level content bounding box to confirm the sphere is NOT clipped at any edge. All viewports PASS: the sphere renders fully inside the square container with visible margin on all sides at every size. Horizontal-overflow check passes on all mobile viewports.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Home page body (desktop >=820)", "issues": ["Minor horizontal page overflow: at viewport 1920 scrollWidth=1984 (+64px); at viewport 820 scrollWidth=884 (+64px). Not sphere-related, outside this test scope, but worth flagging. Mobile widths (390, 360) and tablet 768 have NO horizontal overflow."]}
+    ]
+  },
+  "verification_details": {
+    "methodology": "For each viewport, located container '.hero > .relative', verified bounding box size matches CSS target (200/150/120), reached into iframe.contentDocument.canvas, scanned every pixel to compute content-bbox and derived margins to each canvas edge. Non-zero margin on all four sides = not clipped. Also captured clipped screenshots of the sphere region.",
+    "results": {
+      "desktop_1920x900": {"container": "200x200", "canvas": "400x400 (DPR2)", "margins_L_T_R_B_px": [38,38,13,41], "drawn_pixels": 18856, "clipped": false, "horizontal_overflow": true},
+      "tablet_820x1180":  {"container": "200x200", "canvas": "400x400 (DPR2)", "margins_L_T_R_B_px": [34,37,12,40], "drawn_pixels": 18855, "clipped": false, "horizontal_overflow": true},
+      "tablet_768x1024":  {"container": "150x150", "canvas": "300x300 (DPR2)", "margins_L_T_R_B_px": [20,29,10,29], "drawn_pixels": 13664, "clipped": false, "horizontal_overflow": false},
+      "mobile_390x844":   {"container": "120x120", "canvas": "240x240 (DPR2)", "margins_L_T_R_B_px": [8,21,8,20],   "drawn_pixels": 10290, "clipped": false, "horizontal_overflow": false},
+      "mobile_360x740":   {"container": "120x120", "canvas": "240x240 (DPR2)", "margins_L_T_R_B_px": [7,20,9,19],   "drawn_pixels": 10493, "clipped": false, "horizontal_overflow": false}
+    },
+    "visual_screenshots_dir": "/app/test_reports/screens/"
+  },
+  "test_report_links": ["/app/test_reports/screens/sphere_desktop_1920.png", "/app/test_reports/screens/sphere_tablet_820.png", "/app/test_reports/screens/sphere_tablet_768.png", "/app/test_reports/screens/sphere_mobile_390.png", "/app/test_reports/screens/sphere_mobile_360.png"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "Proportional sphere sizing fix in wireframe-forms.tsx initSphere() works correctly across all tested viewports; sphere scales down proportionally and never clips the container.",
+    "Minor: at desktop/820 the page body has 64px horizontal overflow (not sphere-related). Suggest investigating other full-width elements if PO cares — not in scope for this fix."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100% (5/5 viewports pass)"},
+  "seed_data_creation": "none",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "The wireframe sphere container selector is `.hero > .relative`. To verify non-clipping, read the inner iframe canvas pixel data (same-origin srcDoc) and compute the bounding box of non-dark pixels; margins on all 4 edges must be > 0. Previous iteration confirmed proportional sizing fix (s = max(12, round(min(w,h)*0.24*len))) in /app/frontend/src/components/ui/wireframe-forms.tsx works. If page horizontal overflow on desktop/820 is reported, it is NOT from the sphere."
+}
