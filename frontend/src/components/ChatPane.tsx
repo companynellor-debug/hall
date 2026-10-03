@@ -16,7 +16,7 @@ const models = ['OpenCode Core', 'HALL Swift', 'HALL Deep']
 const stateText: Record<Exclude<State, 'idle'>, string> = {
   thinking: 'Pensando...',
   analyzing: 'Analisando projeto...',
-  executing: 'Editando 3 arquivos...',
+  executing: 'Editando arquivos...',
 }
 
 const runReplies: Record<Mode, string> = {
@@ -40,7 +40,7 @@ export function ChatPane() {
   ])
   const timers = useRef<number[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   useEffect(() => {
     const pending = timers.current
@@ -50,7 +50,7 @@ export function ChatPane() {
   }, [])
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, state])
 
   const send = (preset?: string) => {
@@ -115,7 +115,7 @@ export function ChatPane() {
           </div>
         </div>
 
-        <div className="chat-model">
+        <div className="chat-model" style={{ position: 'relative' }}>
           <span className="label">Model</span>
           <button className="model-btn" onClick={() => setModelOpen((v) => !v)}>
             {model}
@@ -131,6 +131,7 @@ export function ChatPane() {
                     setModel(m)
                     setModelOpen(false)
                   }}
+                  aria-selected={m === model}
                 >
                   {m}
                   {m === model && (
@@ -149,7 +150,11 @@ export function ChatPane() {
         {messages.map((m, i) =>
           m.role === 'user' ? (
             <div key={i} className="msg user">
-              {m.text}
+              <span className="msg-avatar">Você</span>
+              <div className="msg-body">
+                <div className="msg-role">Você</div>
+                <div className="msg-text">{m.text}</div>
+              </div>
             </div>
           ) : (
             <div key={i} className="msg assistant">
@@ -158,7 +163,7 @@ export function ChatPane() {
               </span>
               <div className="msg-body">
                 <div className="msg-role">HALL</div>
-                {m.text}
+                <div className="msg-text">{m.text}</div>
               </div>
             </div>
           ),
@@ -185,20 +190,35 @@ export function ChatPane() {
 
       <div className="chat-input-wrap">
         <div className="chat-input">
-          <button className="chat-attach" title="Anexar">
+          <button className="chat-attach" title="Anexar arquivo">
             <IconAttach size={15} />
           </button>
-          <input
+          <textarea
             ref={inputRef}
-            placeholder="Descreva a tarefa..."
+            placeholder="Descreva a alteração..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => {
               if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') send()
               if (e.key === 'Enter' && !e.ctrlKey && !e.metaKey) send()
             }}
+            rows={1}
+            style={{
+              minHeight: '20px',
+              maxHeight: '120px',
+              background: 'transparent',
+              border: 'none',
+              outline: 'none',
+              color: 'var(--color-text-primary)',
+              fontFamily: 'var(--font-sans)',
+              fontSize: 'var(--text-base)',
+              lineHeight: 1.5,
+              padding: 'var(--space-2) 0',
+              resize: 'none',
+              width: '100%',
+            }}
           />
-          <button className="chat-send" onClick={() => send()} title="Enviar">
+          <button className="chat-send" onClick={() => send()} title="Enviar" disabled={state !== 'idle' || !input.trim()}>
             <IconSend size={15} />
           </button>
         </div>

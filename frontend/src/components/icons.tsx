@@ -261,3 +261,67 @@ export function IconCommit({ size = 13 }: IconProps) {
     </svg>
   )
 }
+
+export function IconPlay({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <polygon points="5 3 19 12 5 21 5 3" />
+    </svg>
+  )
+}
+
+export function IconSquare({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+    </svg>
+  )
+}
+
+export function IconMonitor({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <path d="M2 9h20" />
+      <path d="M12 17v4" />
+    </svg>
+  )
+}
+
+export function IconTablet({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="4" y="2" width="16" height="20" rx="2" />
+      <path d="M12 18h.01" />
+    </svg>
+  )
+}
+
+export function IconSmartphone({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <path d="M12 18h.01" />
+    </svg>
+  )
+}
+
+export function IconCode2({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M18 16l4-4-4-4" />
+      <path d="M6 8l-4 4 4 4" />
+      <path d="M14.5 4h-9a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h4" />
+    </svg>
+  )
+}
+
+export function IconTerminal({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M4 17l5-5 5 5" />
+      <path d="M20 17H4" />
+      <path d="M4 7h16" />
+    </svg>
+  )
+}
