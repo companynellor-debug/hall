@@ -1,42 +1,59 @@
 import { useState } from 'react';
 import { HomeScreen } from './components/home/HomeScreen';
-import { ProjectWorkspace } from './components/ProjectWorkspace';
+import { BuildingWorkspace } from './components/BuildingWorkspace';
 import Background from './components/ui/Background';
 import './index.css';
 
-type View = 'home' | 'workspace';
+type View = 'home' | 'building';
 
 function App() {
   const [view, setView] = useState<View>('home');
   const [projectName, setProjectName] = useState('');
+  const [selectedModel, setSelectedModel] = useState<'auto' | 'hall-core' | 'hall-pro'>('auto');
+  const [lastPrompt, setLastPrompt] = useState('');
 
   const handleBackToHome = () => {
     setView('home');
     setProjectName('');
+    setLastPrompt('');
   };
 
   const handleImportGithub = (url: string) => {
-    // Extract repo name from URL
     const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
     const repoName = match ? match[2].replace(/\.git$/, '') : 'Imported Project';
     setProjectName(repoName);
-    setView('workspace');
+    setView('building');
+    setLastPrompt(`Importar repositório: ${url}`);
   };
 
   const handleCreateProject = (desc: string) => {
-    // For now, just switch to workspace with a generated name
     const projectName = desc.slice(0, 30).replace(/[^a-zA-Z0-9\s-]/g, '').trim() || 'New Project';
     setProjectName(projectName);
-    setView('workspace');
+    setView('building');
+    setLastPrompt(desc);
+  };
+
+  const handleModelChange = (model: 'auto' | 'hall-core' | 'hall-pro') => {
+    setSelectedModel(model);
   };
 
   return (
     <div className="app">
       <Background />
       {view === 'home' ? (
-        <HomeScreen onCreate={handleCreateProject} onImportGithub={handleImportGithub} />
+        <HomeScreen 
+          onCreate={handleCreateProject} 
+          onImportGithub={handleImportGithub}
+          selectedModel={selectedModel}
+          onModelChange={handleModelChange}
+        />
       ) : (
-        <ProjectWorkspace onBack={handleBackToHome} projectName={projectName} />
+        <BuildingWorkspace
+          onBack={handleBackToHome}
+          projectName={projectName}
+          initialPrompt={lastPrompt}
+          selectedModel={selectedModel}
+        />
       )}
     </div>
   );

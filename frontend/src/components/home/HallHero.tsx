@@ -20,10 +20,16 @@ const MODELS = [
   { value: 'hall-pro', label: 'HALL Pro', icon: 'zap' },
 ] as const;
 
-export function HallHero({ onSubmit, onImportGithub }: { onSubmit: (desc: string) => void; onImportGithub: (url: string) => void }) {
+interface HallHeroProps {
+  onSubmit: (desc: string) => void;
+  onImportGithub: (url: string) => void;
+  selectedModel: 'auto' | 'hall-core' | 'hall-pro';
+  onModelChange: (model: 'auto' | 'hall-core' | 'hall-pro') => void;
+}
+
+export function HallHero({ onSubmit, onImportGithub, selectedModel, onModelChange }: HallHeroProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [description, setDescription] = useState('');
-  const [selectedModel, setSelectedModel] = useState<'auto' | 'hall-core' | 'hall-pro'>('auto');
   const [modelMenuOpen, setModelMenuOpen] = useState(false);
 
   // Typewriter placeholder — driven via ref (no React re-renders, keeps the composer light & responsive)
@@ -134,7 +140,15 @@ export function HallHero({ onSubmit, onImportGithub }: { onSubmit: (desc: string
               {modelMenuOpen && (
                 <ul className="model-menu" role="listbox" aria-label="Configurar projeto">
                   {MODELS.map((m) => (
-                    <li key={m.value} role="option" aria-selected={selectedModel === m.value} onClick={() => { setSelectedModel(m.value as 'auto' | 'hall-core' | 'hall-pro'); setModelMenuOpen(false); }}>
+                    <li
+                      key={m.value}
+                      role="option"
+                      aria-selected={selectedModel === m.value}
+                      onClick={() => { 
+                        onModelChange(m.value as 'auto' | 'hall-core' | 'hall-pro'); 
+                        setModelMenuOpen(false); 
+                      }}
+                    >
                       <Icon name={m.icon} size={14} />
                       <span>{m.label}</span>
                     </li>

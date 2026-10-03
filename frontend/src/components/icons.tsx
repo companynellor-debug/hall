@@ -83,6 +83,10 @@ export function IconGear({ size = 18 }: IconProps) {
   )
 }
 
+export function IconSettings({ size = 18 }: IconProps) {
+  return <IconGear size={size} />;
+}
+
 export function IconChevronDown({ size = 13 }: IconProps) {
   return (
     <svg {...base(size)}>
@@ -112,6 +116,18 @@ export function IconFile({ size = 14 }: IconProps) {
     <svg {...base(size)}>
       <path d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
       <path d="M14 3v4h4" />
+    </svg>
+  )
+}
+
+export function IconFileText({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+      <path d="M14 2v6h6" />
+      <path d="M16 13H8" />
+      <path d="M16 17H8" />
+      <path d="M10 9H8" />
     </svg>
   )
 }
@@ -258,6 +274,241 @@ export function IconCommit({ size = 13 }: IconProps) {
     <svg {...base(size)}>
       <circle cx="12" cy="12" r="6.5" />
       <circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
+export function IconLoader({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+    </svg>
+  )
+}
+
+export function IconAlertCircle({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 8v4M12 16h.01" />
+    </svg>
+  )
+}
+
+export function IconClock({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v6l4 2" />
+    </svg>
+  )
+}
+
+export function IconSparkles({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M12 3v2m0 14v2m9-9h-2M4 12H2m12.73-9.73l-1.41 1.41M7.05 7.05l-1.41 1.41M17.07 17.07l-1.41 1.41M8.36 17.07l1.41-1.41" />
+    </svg>
+  )
+}
+
+export function IconMaximize({ size = 13 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3" />
+    </svg>
+  )
+}
+
+export function IconCode({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
+    </svg>
+  )
+}
+
+export function IconTerminal({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M4 17l5-5 5 5M12 2v20M9 7h10M9 12h6M9 17h10" />
+    </svg>
+  )
+}
+
+export function IconLayoutDashboard({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
+    </svg>
+  )
+}
+
+export function IconLayout({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="3" y="3" width="8" height="8" rx="1" />
+      <rect x="13" y="3" width="8" height="8" rx="1" />
+      <rect x="3" y="13" width="8" height="8" rx="1" />
+      <rect x="13" y="13" width="8" height="8" rx="1" />
+    </svg>
+  )
+}
+
+export function IconChevronLeft({ size = 13 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="m15 15-6-6 6-6" />
+    </svg>
+  )
+}
+
+export function IconX({ size = 12 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="m6 6 12 12M18 6 6 18" />
+    </svg>
+  )
+}
+
+export function IconHistory({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M12 6v6l4 2" />
+      <path d="M8 14a6 6 0 0 1 8 0" />
+    </svg>
+  )
+}
+
+export function IconHeartPulse({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+      <path d="M23 21v-4" />
+      <path d="M17 17l5-5" />
+    </svg>
+  )
+}
+
+export function IconMessageSquare({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+    </svg>
+  )
+}
+
+export function IconListTodo({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M9 11l3 3L22 4" />
+      <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+    </svg>
+  )
+}
+
+export function IconMonitor({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <path d="M8 21h8" />
+      <path d="M12 17v4" />
+    </svg>
+  )
+}
+
+export function IconTablet({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="4" y="2" width="16" height="20" rx="2" />
+      <path d="M12 18h.01" />
+    </svg>
+  )
+}
+
+export function IconSmartphone({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="5" y="2" width="14" height="20" rx="2" />
+      <path d="M12 18h.01" />
+    </svg>
+  )
+}
+
+export function IconHouse({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <path d="M9 22V12h6v10" />
+    </svg>
+  )
+}
+
+export function IconBookOpen({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 1-3 3H2z" />
+      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 0 3 3h7z" />
+    </svg>
+  )
+}
+
+export function IconUsersRound({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M18 21a8 8 0 0 0-16 0" />
+      <circle cx="10" cy="8" r="5" />
+      <path d="M22 21a8 8 0 0 0-16 0" />
+      <circle cx="14" cy="16" r="5" />
+    </svg>
+  )
+}
+
+export function IconGithub({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.93 3.55c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" />
+    </svg>
+  )
+}
+
+export function IconUserRound({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M18 20a6 6 0 0 0-12 0" />
+      <circle cx="12" cy="10" r="4" />
+    </svg>
+  )
+}
+
+export function IconRefreshCw({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+      <path d="M21 12a9 9 0 1 1-9 9 9.75 9.75 0 0 1 6.74-2.74L21 16" />
+    </svg>
+  )
+}
+
+export function IconCode2({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <path d="M16 18l6-6-6-6M8 6l-6 6 6 6" />
+    </svg>
+  )
+}
+
+export function IconPanelsTopLeft({ size = 14 }: IconProps) {
+  return (
+    <svg {...base(size)}>
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <rect x="14" y="14" width="7" height="7" rx="1" />
     </svg>
   )
 }
