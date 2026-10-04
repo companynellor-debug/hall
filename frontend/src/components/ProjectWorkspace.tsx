@@ -5,6 +5,7 @@ import hallLogo from '../assets/hall-logo.png';
 interface ProjectWorkspaceProps {
   onBack: () => void;
   projectName: string;
+  onOpenSettings: () => void;
 }
 
 const NAV = [
@@ -22,7 +23,7 @@ function NavIcon({ name }: { name: string }) {
   return <svg {...p}><circle cx="9" cy="8" r="3" /><path d="M3 20a6 6 0 0 1 12 0" /><circle cx="17" cy="9" r="2.3" /><path d="M16 20a5 5 0 0 1 5-5" /></svg>;
 }
 
-export function ProjectWorkspace({ onBack, projectName }: ProjectWorkspaceProps) {
+export function ProjectWorkspace({ onBack, projectName, onOpenSettings }: ProjectWorkspaceProps) {
   const display = projectName || 'Nellor';
   const initial = display.charAt(0).toUpperCase();
 
@@ -82,7 +83,7 @@ export function ProjectWorkspace({ onBack, projectName }: ProjectWorkspaceProps)
             </svg>
             Sync Git
           </button>
-          <button className="ws-btn" data-testid="ws-settings-btn">
+          <button className="ws-btn" onClick={onOpenSettings} data-testid="ws-settings-btn">
             <Icon name="settings" size={15} />
             Configurações
           </button>

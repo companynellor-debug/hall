@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { HomeScreen } from './components/home/HomeScreen';
 import { ProjectWorkspace } from './components/ProjectWorkspace';
+import { ProjectSettings } from './components/settings/ProjectSettings';
 import Background from './components/ui/Background';
 import './index.css';
 
-type View = 'home' | 'workspace';
+type View = 'home' | 'workspace' | 'settings';
 
 function App() {
   const [view, setView] = useState<View>('home');
@@ -35,8 +36,18 @@ function App() {
       <Background />
       {view === 'home' ? (
         <HomeScreen onCreate={handleCreateProject} onImportGithub={handleImportGithub} />
+      ) : view === 'settings' ? (
+        <ProjectSettings
+          projectName={projectName}
+          onHome={handleBackToHome}
+          onOpenProject={() => setView('workspace')}
+        />
       ) : (
-        <ProjectWorkspace onBack={handleBackToHome} projectName={projectName} />
+        <ProjectWorkspace
+          onBack={handleBackToHome}
+          projectName={projectName}
+          onOpenSettings={() => setView('settings')}
+        />
       )}
     </div>
   );
