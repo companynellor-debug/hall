@@ -49,3 +49,10 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 - P2: Ligar backend real / persistência se necessário
 
 - [2026-06] Bug fix: elemento wireframe (esfera) do topo estava cortado em mobile/tablet (tamanho fixo s=50 num container que encolhe). Corrigido tornando o raio proporcional ao container em wireframe-forms.tsx (initSphere + rebuild no resize). Verificado pelo testing_agent (5 viewports, 100% sem corte). Também corrigido overflow horizontal de 64px (home-main tinha width:100% + margin-left:64px) -> width calc(100%-64px); overflow agora 0 em 1920/820/390.
+## [2026-06] Project Settings screen (frontend-only)
+- Nova view `settings` em `App.tsx` (routing por estado: home | workspace | settings), mantendo o contexto do projeto. Acessível via botão "Configurações" do workspace (`ws-settings-btn`); "Abrir projeto" retorna ao workspace.
+- Página `components/settings/ProjectSettings.tsx`: header global HALL, breadcrumb (Projetos › Projeto › Configurações), heading (avatar/nome/badge/subtítulo/Abrir projeto/⋯), save bar (Descartar/Salvar com dirty-state via JSON compare), sidebar + conteúdo.
+- Sidebar (`SettingsSidebar.tsx`) com 10 seções + indicador vermelho à esquerda no ativo (sem quadrado vermelho atrás do ícone). Ícones lucide-react + Icon github.
+- Seções (`sections.tsx`): Overview (Project Overview 4 campos, Agent Responsibilities, Project Health, Connected Providers, Integrations), Models & Agents, GitHub, Integrations, Security, Design, Deploy, Environment, Logs, Advanced (Danger Zone com diálogo de confirmação). Tudo MOCK (sem backend/API/OAuth, conforme pedido).
+- Primitivos reutilizáveis em `ui.tsx` (SettingsCard, StatusBadge, Field, Input, Textarea, Select, Toggle, Btn). CSS em `settings.css`.
+- Verificado pelo testing_agent: 100% (13/13 critérios). tsc + oxlint sem erros.

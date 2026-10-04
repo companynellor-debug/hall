@@ -1,0 +1,48 @@
+{
+  "summary": "Frontend-only end-to-end testing of the new Project Settings screen on HALL at desktop 1920x1000. Verified Home -> prompt send -> Workspace -> Configurações flow, breadcrumb/header, Save/Discard dirty-state behavior across Overview and other sections, all 10 sidebar nav items (overview/models/github/integrations/security/design/deploy/environment/logs/advanced), Models & Agents selects + toggles (4 agents), Security toggles (5), Environment variables rendering with masked values + Adicionar button, Logs search + level + source filtering, Advanced Danger Zone confirmation dialogs (archive/reset/delete) + toast + no-navigation, and Abrir projeto returning to the workspace keeping context. All 13 testable criteria PASS.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Project Settings / Environment", "issues": ["Edit (pencil) and Delete (trash) actions on env-var rows are icon-only buttons without visible text 'Editar'/'Excluir'. Visually clear but reduces discoverability; consider aria-labels or tooltips (they do render as required by the task)."]},
+      {"screen": "Project Settings header", "issues": ["When Home prompt is longer than ~12 chars, project name used for breadcrumb/header is truncated (e.g. 'Build a todo app' -> 'Build a todo'). Minor UX nit; may be intentional slicing from the prompt."]}
+    ]
+  },
+  "verification_details": {
+    "home_to_workspace": "textarea fill + button[aria-label='Enviar prompt'] click opens workspace (ws-settings-btn visible).",
+    "workspace_to_settings": "ws-settings-btn click opens project-settings; breadcrumb 'Projetos › <project> › Configurações' confirmed.",
+    "header": "Avatar initial, project name, 'Projeto' badge and subtitle all render.",
+    "save_discard_initial_disabled": "save-btn and discard-btn disabled on first render (both true).",
+    "edit_enables_save": "After editing overview-name, both buttons become enabled.",
+    "discard_restores_and_disables": "Clicking Descartar restores original name and re-disables both buttons.",
+    "save_persists_and_disables": "Clicking Salvar alterações keeps new value and disables buttons.",
+    "sidebar_nav": "All 10 settings-nav-* items click and swap content without reload. Active item has 'active' class, no solid red square (background rgba(255,255,255,0.04)); red indicator rendered as separate element (visible in screenshots).",
+    "models": "4 agent cards present (coding/design/security/review) each with models-select-* and models-toggle-*; toggling enables Save.",
+    "security": "All 5 toggles (deps/env/deploy/confirm/scan) present and clicking enables Save.",
+    "environment": "3 env-var rows render with masked '••••' values + 'Adicionar variável' button. Row-level edit/delete are icon buttons.",
+    "logs": "5 initial log rows. Search 'xyznoop_match' -> 0 rows; level filter idx1 -> 3 rows; source filter idx1 -> 2 rows (filters work).",
+    "advanced_danger_zone": "danger-archive/reset/delete each open confirm-dialog, confirmation triggers a toast, user stays in settings (no navigation, no deletion).",
+    "open_project": "Abrir projeto returns to workspace with ws-settings-btn visible (context preserved)."
+  },
+  "test_report_links": [
+    "/app/test_reports/screens/01_home.png",
+    "/app/test_reports/screens/02_workspace.png",
+    "/app/test_reports/screens/03_settings.png",
+    "/app/test_reports/screens/04_advanced.png",
+    "/app/test_reports/screens/models.png",
+    "/app/test_reports/screens/env.png"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "All data-testid hooks required by the task are present and selectable; dirty-state detection via JSON compare works for text, select and toggle changes.",
+    "Minor: project name derived from the Home prompt is sliced/truncated (~12 chars). If this is unintended, trim and allow full name instead of a prefix slice.",
+    "Minor: env-var row edit/delete icon buttons should have accessible labels (aria-label) for a11y."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped by request)", "frontend": "100% (13/13 test criteria pass)"},
+  "seed_data_creation": "none - frontend-only mock data used by the feature.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "App is Vite + React + TS with state-based routing (no URL changes). Public URL: https://hallrepo-import.preview.emergentagent.com. There is no /app/frontend/.env file; the frontend is served by `yarn start` on port 3000 via supervisor. To reach Project Settings: fill the first textarea on Home -> click button[aria-label='Enviar prompt'] -> on workspace click [data-testid='ws-settings-btn']. All settings data is mocked in components/settings/data.ts; Save/Discard uses JSON compare for dirty state. No backend calls are made from Settings."
+}
