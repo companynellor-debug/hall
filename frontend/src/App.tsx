@@ -24,8 +24,8 @@ function App() {
   };
 
   const handleCreateProject = (desc: string) => {
-    // For now, just switch to workspace with a generated name
-    const projectName = desc.slice(0, 30).replace(/[^a-zA-Z0-9\s-]/g, '').trim() || 'New Project';
+    const words = desc.replace(/[^a-zA-Z0-9\sÀ-ÿ]/g, '').trim().split(/\s+/).slice(0, 3).join(' ');
+    const projectName = words || 'Novo Projeto';
     setProjectName(projectName);
     setView('workspace');
   };
