@@ -231,7 +231,10 @@
   border-radius: var(--radius-md); background: var(--color-surface-elevated); border: 1px solid var(--color-border);
   color: var(--color-text-primary);
 }
+.st-brand svg { width: 24px; height: 24px; }
 .st-brand.sm { width: 34px; height: 34px; }
+.st-brand.sm svg { width: 18px; height: 18px; }
+
 .st-brand-letter { font-weight: 800; font-size: 20px; font-family: var(--font-sans); }
 
 /* ===================== Integrations rows ===================== */

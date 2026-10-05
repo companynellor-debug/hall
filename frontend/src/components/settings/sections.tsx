@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import {
   LayoutGrid, Bot, Link2, Puzzle, Activity, Webhook, MoreHorizontal,
-  Cpu, Boxes, Database, Triangle, CreditCard, Shield, Palette, Rocket, Variable, ScrollText,
+  Shield, Palette, Rocket, Variable, ScrollText,
   SlidersHorizontal, CircleCheck, TriangleAlert, Plus, Pencil, Trash2, Search, RefreshCw,
 } from 'lucide-react';
 import { Icon } from '../ui/Icon';
+import { BrandLogo } from './BrandLogo';
 import {
   SettingsCard, StatusBadge, Field, SettingsInput, SettingsTextarea, SettingsSelect,
   SettingsToggle, Btn,
@@ -19,16 +20,7 @@ interface SectionProps { form: SettingsForm; update: Update }
 
 /* =================== Brand icon =================== */
 function BrandIcon({ name, size = 22 }: { name: string; size?: number }) {
-  switch (name) {
-    case 'github': return <Icon name="github" size={size} />;
-    case 'nvidia': return <Cpu size={size} color="#76b900" />;
-    case 'openrouter': return <Boxes size={size} />;
-    case 'supabase': return <Database size={size} color="#3ecf8e" />;
-    case 'vercel': return <Triangle size={size} fill="currentColor" />;
-    case 'asaas': return <span className="st-brand-letter" style={{ color: '#2a6bff' }}>a</span>;
-    case 'stripe': return <CreditCard size={size} color="#8a7dff" />;
-    default: return <Puzzle size={size} />;
-  }
+  return <BrandLogo name={name} size={size} />;
 }
 
 /* =================== OVERVIEW =================== */

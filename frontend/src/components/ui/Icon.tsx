@@ -8,7 +8,8 @@ export type IconName =
   | 'server' | 'globe' | 'terminal' | 'zap' | 'shield'
   | 'star' | 'heart' | 'menu' | 'more-horizontal' | 'more-vertical'
   | 'mic' | 'cpu' | 'arrow-right' | 'sparkles' | 'message-square'
-  | 'bar-chart' | 'users' | 'cube' | 'download';
+  | 'bar-chart' | 'users' | 'cube' | 'download'
+  | 'nvidia' | 'openrouter' | 'supabase' | 'vercel' | 'asaas' | 'stripe';
 
 const icons: Record<IconName, (props: SVGProps<SVGSVGElement>) => JSX.Element> = {
   github: (props) => (
@@ -256,6 +257,36 @@ const icons: Record<IconName, (props: SVGProps<SVGSVGElement>) => JSX.Element> =
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
       <polyline points="7 10 12 15 17 10" />
       <line x1="12" y1="15" x2="12" y2="3" />
+    </svg>
+  ),
+  nvidia: (props) => (
+    <svg {...props} viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+      <path d="M12.002 0C5.376 0 0 5.297 0 11.832c0 6.447 5.376 11.833 12.002 11.833 6.626 0 12.002-5.386 12.002-11.833C24.004 5.297 18.628 0 12.002 0zm1.5 20.317h-3V13.5c0-.827-.67-1.498-1.498-1.498-.828 0-1.498.671-1.498 1.498v6.817H8.5c-.827 0-1.498.671-1.498 1.498s.671 1.498 1.498 1.498h3c.828 0 1.498-.671 1.498-1.498v-6.817c0-.827-.67-1.498-1.498-1.498-.828 0-1.498.671-1.498 1.498v6.817H5.5c-.827 0-1.498.671-1.498 1.498 0 .827.671 1.498 1.498 1.498h9c.828 0 1.498-.671 1.498-1.498 0-.827-.67-1.498-1.498-1.498zm0-17.319c-3.866 0-7 3.134-7 7s3.134 7 7 7 7-3.134 7-7-3.134-7-7-7zm0 12c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+    </svg>
+  ),
+  openrouter: (props) => (
+    <svg {...props} viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5.52 14H13v2.5c0 .827-.67 1.5-1.5 1.5s-1.5-.67-1.5-1.5V11H7c-.55 0-1-.45-1-1s.45-1 1-1h3V7.5c0-.827.67-1.5 1.5-1.5S12 6.67 12 7.5V10h2.5c.827 0 1.5.67 1.5 1.5S13.5 13 12.5 13H11v2.5c0 .55.45 1 1 1s1-.45 1-1V13h4.5c.55 0 1-.45 1-1s-.45-1-1-1z"/>
+    </svg>
+  ),
+  supabase: (props) => (
+    <svg {...props} viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+      <path d="M12 2L2 7l10 5 10-5-10-5zm0 2.18l8.18 4.09-8.18 4.09L2 11.09l8.18-4.09L12 2.18zm0 13.64L2 21.82l8.18-4.09 8.18 4.09L22 13.73l-8.18 4.09L12 15.82z"/>
+    </svg>
+  ),
+  vercel: (props) => (
+    <svg {...props} viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+      <path d="M21.73 11.93l-7.58-7.58-7.58 7.58 7.58 7.58 7.58-7.58zm-1.41 1.41l-6.17 6.17-6.17-6.17 6.17-6.17 6.17 6.17z"/>
+    </svg>
+  ),
+  asaas: (props) => (
+    <svg {...props} viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+    </svg>
+  ),
+  stripe: (props) => (
+    <svg {...props} viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.19-1.19a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06a5.5 5.5 0 0 0 7.78 7.78l1.09 1.09a5.5 5.5 0 0 0 7.78 0l1.1 1.1a5.5 5.5 0 0 0 7.78 0l1.1-1.1a5.5 5.5 0 0 0 0-7.78z"/>
     </svg>
   ),
 };

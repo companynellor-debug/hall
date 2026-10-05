@@ -1,5 +1,6 @@
 import {
-  LayoutGrid, Bot, Puzzle, Shield, Palette, Rocket, Variable, ScrollText, SlidersHorizontal,
+  LayoutDashboard, BrainCircuit, Plug, ShieldCheck,
+  PenSquare, Server, Terminal, Settings2, FileText,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Icon } from '../ui/Icon';
@@ -8,16 +9,16 @@ import type { SectionId } from './data';
 interface Item { id: SectionId; label: string; icon?: LucideIcon; brand?: 'github' }
 
 const ITEMS: Item[] = [
-  { id: 'overview', label: 'Overview', icon: LayoutGrid },
-  { id: 'models', label: 'Models & Agents', icon: Bot },
+  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+  { id: 'models', label: 'Models & Agents', icon: BrainCircuit },
   { id: 'github', label: 'GitHub', brand: 'github' },
-  { id: 'integrations', label: 'Integrations', icon: Puzzle },
-  { id: 'security', label: 'Security', icon: Shield },
-  { id: 'design', label: 'Design', icon: Palette },
-  { id: 'deploy', label: 'Deploy', icon: Rocket },
-  { id: 'environment', label: 'Environment', icon: Variable },
-  { id: 'logs', label: 'Logs', icon: ScrollText },
-  { id: 'advanced', label: 'Advanced', icon: SlidersHorizontal },
+  { id: 'integrations', label: 'Integrations', icon: Plug },
+  { id: 'security', label: 'Security', icon: ShieldCheck },
+  { id: 'design', label: 'Design', icon: PenSquare },
+  { id: 'deploy', label: 'Deploy', icon: Server },
+  { id: 'environment', label: 'Environment', icon: Terminal },
+  { id: 'logs', label: 'Logs', icon: FileText },
+  { id: 'advanced', label: 'Advanced', icon: Settings2 },
 ];
 
 export function SettingsSidebar({ active, onChange }: { active: SectionId; onChange: (id: SectionId) => void }) {

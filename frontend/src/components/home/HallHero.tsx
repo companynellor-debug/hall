@@ -14,17 +14,9 @@ const PLACEHOLDERS = [
   'Ex.: um site institucional com blog, formulários e SEO otimizado…',
 ];
 
-const MODELS = [
-  { value: 'auto', label: 'Auto', icon: 'mic' },
-  { value: 'hall-core', label: 'HALL Core', icon: 'cpu' },
-  { value: 'hall-pro', label: 'HALL Pro', icon: 'zap' },
-] as const;
-
-export function HallHero({ onSubmit, onImportGithub }: { onSubmit: (desc: string) => void; onImportGithub: (url: string) => void }) {
+export function HallHero({ onSubmit, onImportGithub, onOpenSettings }: { onSubmit: (desc: string) => void; onImportGithub: (url: string) => void; onOpenSettings: () => void }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [description, setDescription] = useState('');
-  const [selectedModel, setSelectedModel] = useState<'auto' | 'hall-core' | 'hall-pro'>('auto');
-  const [modelMenuOpen, setModelMenuOpen] = useState(false);
 
   // Typewriter placeholder — driven via ref (no React re-renders, keeps the composer light & responsive)
   useEffect(() => {
@@ -124,23 +116,12 @@ export function HallHero({ onSubmit, onImportGithub }: { onSubmit: (desc: string
               <button
                 type="button"
                 className="model-select-btn fluid-glass"
-                onClick={() => setModelMenuOpen(!modelMenuOpen)}
-                aria-expanded={modelMenuOpen}
-                aria-haspopup="listbox"
-                aria-label="Configurar projeto"
+                onClick={onOpenSettings}
+                aria-label="Configurações do projeto"
+                title="Configurações do projeto"
               >
                 <Icon name="more-vertical" size={18} />
               </button>
-              {modelMenuOpen && (
-                <ul className="model-menu" role="listbox" aria-label="Configurar projeto">
-                  {MODELS.map((m) => (
-                    <li key={m.value} role="option" aria-selected={selectedModel === m.value} onClick={() => { setSelectedModel(m.value as 'auto' | 'hall-core' | 'hall-pro'); setModelMenuOpen(false); }}>
-                      <Icon name={m.icon} size={14} />
-                      <span>{m.label}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
             </div>
 
             <ImportGithub onImport={onImportGithub} />

@@ -17,7 +17,6 @@ function App() {
   };
 
   const handleImportGithub = (url: string) => {
-    // Extract repo name from URL
     const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
     const repoName = match ? match[2].replace(/\.git$/, '') : 'Imported Project';
     setProjectName(repoName);
@@ -31,11 +30,15 @@ function App() {
     setView('workspace');
   };
 
+  const handleOpenSettings = () => {
+    setView('settings');
+  };
+
   return (
     <div className="app">
       <Background />
       {view === 'home' ? (
-        <HomeScreen onCreate={handleCreateProject} onImportGithub={handleImportGithub} />
+        <HomeScreen onCreate={handleCreateProject} onImportGithub={handleImportGithub} onOpenSettings={handleOpenSettings} />
       ) : view === 'settings' ? (
         <ProjectSettings
           projectName={projectName}
@@ -46,7 +49,7 @@ function App() {
         <ProjectWorkspace
           onBack={handleBackToHome}
           projectName={projectName}
-          onOpenSettings={() => setView('settings')}
+          onOpenSettings={handleOpenSettings}
         />
       )}
     </div>
