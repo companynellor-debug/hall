@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import {
-  LayoutGrid, Bot, Link2, Puzzle, Activity, Webhook, MoreHorizontal,
+  LayoutGrid, Bot, Link2, Activity, Webhook, MoreHorizontal,
   Shield, Palette, Rocket, Variable, ScrollText,
-  SlidersHorizontal, CircleCheck, TriangleAlert, Plus, Pencil, Trash2, Search, RefreshCw,
+  SlidersHorizontal, CircleCheck, TriangleAlert, Plus, Pencil, Trash2, Search, RefreshCw, Puzzle,
 } from 'lucide-react';
 import { Icon } from '../ui/Icon';
 import { BrandLogo } from './BrandLogo';
@@ -11,22 +11,44 @@ import {
   SettingsToggle, Btn,
 } from './ui';
 import {
-  AGENTS, MODEL_OPTIONS, WORKSPACES, STATUSES, INTEGRATIONS, PROVIDERS, ENV_VARS, LOGS,
-  type SettingsForm, type AgentKey, type IntegrationItem, type ProviderItem, type LogLevel,
+  AGENTS, MODEL_OPTIONS, WORKSPACES, STATUSES, LOGS,
+  type SettingsForm, type AgentKey, type LogLevel,
 } from './data';
+import type { UpdateProjectInput, UpdateAgentInput, AgentRole, AvailableModel } from '../../features/project-settings/types';
 
 type Update = (fn: (f: SettingsForm) => SettingsForm) => void;
-interface SectionProps { form: SettingsForm; update: Update }
+
+interface SectionProps {
+  form: SettingsForm;
+  update: Update;
+  availableModels: AvailableModel[];
+  updateProject: (input: UpdateProjectInput) => void;
+  updateAgent: (role: AgentRole, input: UpdateAgentInput) => void;
+  updateSecurity: (input: any) => void;
+  updateDesign: (input: any) => void;
+  updateDeployment: (input: any) => void;
+  updateGitHub: (input: any) => void;
+  connectProvider: (input: any) => Promise<void>;
+  disconnectProvider: (providerKey: string) => Promise<void>;
+  connectIntegration: (input: any) => Promise<void>;
+  disconnectIntegration: (integrationKey: string) => Promise<void>;
+  upsertEnvVar: (input: any) => Promise<void>;
+  deleteEnvVar: (variableId: string) => Promise<void>;
+  settings?: any;
+}
 
 /* =================== Brand icon =================== */
 function BrandIcon({ name, size = 22 }: { name: string; size?: number }) {
   return <BrandLogo name={name} size={size} />;
 }
 
-/* =================== OVERVIEW =================== */
-function AgentModelRow({ k, form, update }: { k: AgentKey; form: SettingsForm; update: Update }) {
+/* =================== Agent Model Row =================== */
+function AgentModelRow({ k, form, updateAgent }: { k: AgentKey; form: SettingsForm; updateAgent: (role: AgentRole, input: UpdateAgentInput) => void }) {
   const meta = AGENTS.find((a) => a.key === k)!;
   const cfg = form.agents[k];
+  const handleChange = useCallback((v: string) => updateAgent(k, { modelId: v }), [updateAgent, k]);
+  const handleToggle = useCallback(() => updateAgent(k, { enabled: !cfg.active }), [updateAgent, k, cfg.active]);
+
   return (
     <div className="st-agent-row" data-testid={`agent-row-${k}`}>
       <div className="st-agent-info">
@@ -36,14 +58,15 @@ function AgentModelRow({ k, form, update }: { k: AgentKey; form: SettingsForm; u
       <SettingsSelect
         value={cfg.model}
         options={MODEL_OPTIONS}
-        onChange={(v) => update((f) => ({ ...f, agents: { ...f.agents, [k]: { ...f.agents[k], model: v } } }))}
+        onChange={handleChange}
         data-testid={`agent-model-${k}`}
       />
-      <StatusBadge tone={cfg.active ? 'ok' : 'neutral'} label={cfg.active ? 'Ativo' : 'Inativo'} />
+      <SettingsToggle checked={cfg.active} onChange={handleToggle} data-testid={`agent-toggle-${k}`} />
     </div>
   );
 }
 
+/* =================== Health Row =================== */
 function HealthRow({ icon, title, desc, tone, badge }: { icon: React.ReactNode; title: string; desc: string; tone: 'ok' | 'warn' | 'error'; badge: string }) {
   return (
     <div className="st-health-row">
@@ -57,24 +80,42 @@ function HealthRow({ icon, title, desc, tone, badge }: { icon: React.ReactNode; 
   );
 }
 
-function ProviderCard({ p }: { p: ProviderItem }) {
+/* =================== Provider Card =================== */
+function ProviderCard({ p, connectProvider, disconnectProvider, settings }: { p: { id: string; name: string; description: string; icon: string }; connectProvider: (input: any) => Promise<void>; disconnectProvider: (providerKey: string) => Promise<void>; settings: { providers: Array<{ providerKey: string; status: string }> } }) {
+  const provider = settings.providers.find(pv => pv.providerKey === p.id);
+  const connected = provider?.status === 'connected';
+
+  const handleConnect = useCallback(async () => { await connectProvider({ providerKey: p.id }); }, [connectProvider, p.id]);
+  const handleDisconnect = useCallback(async () => { await disconnectProvider(p.id); }, [disconnectProvider, p.id]);
+
   return (
     <div className="st-provider" data-testid={`provider-${p.id}`}>
       <div className="st-provider-top">
         <span className="st-brand">{<BrandIcon name={p.icon} size={24} />}</span>
         <div className="st-provider-main">
           <div className="st-provider-name">{p.name}</div>
-          <span className="st-conn ok"><span className="st-badge-dot" />Conectado</span>
+          <span className={`st-conn ${connected ? 'ok' : ''}`}><span className="st-badge-dot" />{connected ? 'Conectado' : 'Desconectado'}</span>
         </div>
         <button className="st-more" aria-label="Mais opções"><MoreHorizontal size={16} /></button>
       </div>
       <p className="st-provider-desc">{p.description}</p>
+      <div className="st-provider-actions">
+        <Btn variant={connected ? 'secondary' : 'primary'} onClick={connected ? handleDisconnect : handleConnect} data-testid={`provider-action-${p.id}`}>
+          {connected ? 'Desconectar' : 'Conectar'}
+        </Btn>
+      </div>
     </div>
   );
 }
 
-function IntegrationRow({ it }: { it: IntegrationItem }) {
-  const connected = it.state === 'connected';
+/* =================== Integration Row =================== */
+function IntegrationRow({ it, connectIntegration, disconnectIntegration, settings }: { it: { id: string; name: string; description: string; icon: string }; connectIntegration: (input: any) => Promise<void>; disconnectIntegration: (integrationKey: string) => Promise<void>; settings: { integrations: Array<{ integrationKey: string; status: string }> } }) {
+  const integration = settings.integrations.find(i => i.integrationKey === it.id);
+  const connected = integration?.status === 'connected';
+
+  const handleConnect = useCallback(async () => { await connectIntegration({ integrationKey: it.id }); }, [connectIntegration, it.id]);
+  const handleDisconnect = useCallback(async () => { await disconnectIntegration(it.id); }, [disconnectIntegration, it.id]);
+
   return (
     <div className="st-int-row" data-testid={`integration-${it.id}`}>
       <span className="st-brand sm">{<BrandIcon name={it.icon} size={18} />}</span>
@@ -83,7 +124,7 @@ function IntegrationRow({ it }: { it: IntegrationItem }) {
         <div className="st-int-desc">{it.description}</div>
       </div>
       <StatusBadge tone={connected ? 'ok' : 'neutral'} label={connected ? 'Conectado' : 'Não conectado'} />
-      <Btn variant={connected ? 'secondary' : 'primary'} data-testid={`int-action-${it.id}`}>
+      <Btn variant={connected ? 'secondary' : 'primary'} onClick={connected ? handleDisconnect : handleConnect} data-testid={`int-action-${it.id}`}>
         {connected ? 'Configurar' : 'Conectar'}
       </Btn>
       <button className="st-more" aria-label="Mais opções"><MoreHorizontal size={16} /></button>
@@ -91,7 +132,15 @@ function IntegrationRow({ it }: { it: IntegrationItem }) {
   );
 }
 
-export function OverviewSection({ form, update }: SectionProps) {
+/* =================== OVERVIEW =================== */
+export function OverviewSection(props: SectionProps) {
+  const { form, update, updateProject: _updateProject, updateAgent, updateSecurity: _updateSecurity, updateDesign: _updateDesign, updateDeployment: _updateDeployment, updateGitHub: _updateGitHub, connectProvider, disconnectProvider, connectIntegration, disconnectIntegration, settings, availableModels: _availableModels } = props;
+
+  const handleNameChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => update(f => ({ ...f, name: e.target.value })), [update]);
+  const handleDescriptionChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => update(f => ({ ...f, description: e.target.value })), [update]);
+  const handleWorkspaceChange = useCallback((v: string) => update(f => ({ ...f, workspace: v })), [update]);
+  const handleStatusChange = useCallback((v: string) => update(f => ({ ...f, status: v as SettingsForm['status'] })), [update]);
+
   return (
     <div className="st-sections">
       <SettingsCard
@@ -101,32 +150,16 @@ export function OverviewSection({ form, update }: SectionProps) {
       >
         <div className="st-overview-grid">
           <Field label="Nome do projeto" helper="Este é o nome exibido em todo o HALL.">
-            <SettingsInput
-              value={form.name}
-              onChange={(e) => update((f) => ({ ...f, name: e.target.value }))}
-              data-testid="overview-name"
-            />
+            <SettingsInput value={form.name} onChange={handleNameChange} data-testid="overview-name" />
           </Field>
           <Field label="Descrição" counter={`${form.description.length}/280`}>
-            <SettingsTextarea
-              value={form.description}
-              maxLength={280}
-              rows={3}
-              onChange={(e) => update((f) => ({ ...f, description: e.target.value }))}
-              data-testid="overview-description"
-            />
+            <SettingsTextarea value={form.description} maxLength={280} rows={3} onChange={handleDescriptionChange} data-testid="overview-description" />
           </Field>
           <Field label="Workspace" helper="Este projeto pertence a este workspace.">
-            <SettingsSelect value={form.workspace} options={WORKSPACES} onChange={(v) => update((f) => ({ ...f, workspace: v }))} data-testid="overview-workspace" />
+            <SettingsSelect value={form.workspace} options={WORKSPACES} onChange={handleWorkspaceChange} data-testid="overview-workspace" />
           </Field>
           <Field label="Status" helper="Projeto ativo e pronto para uso.">
-            <SettingsSelect
-              value={form.status}
-              options={STATUSES}
-              dotTone={form.status === 'Ativo' ? 'ok' : form.status === 'Pausado' ? 'warn' : 'neutral'}
-              onChange={(v) => update((f) => ({ ...f, status: v as SettingsForm['status'] }))}
-              data-testid="overview-status"
-            />
+            <SettingsSelect value={form.status} options={STATUSES} dotTone={form.status === 'Ativo' ? 'ok' : form.status === 'Pausado' ? 'warn' : 'neutral'} onChange={handleStatusChange} data-testid="overview-status" />
           </Field>
         </div>
       </SettingsCard>
@@ -135,7 +168,7 @@ export function OverviewSection({ form, update }: SectionProps) {
         <div className="st-col">
           <SettingsCard icon={<Bot size={18} />} title="Agent Responsibilities" subtitle="Defina quais modelos e agentes são responsáveis por cada tipo de tarefa.">
             <div className="st-agent-list">
-              {AGENTS.map((a) => <AgentModelRow key={a.key} k={a.key} form={form} update={update} />)}
+              {AGENTS.map((a) => <AgentModelRow key={a.key} k={a.key} form={form} updateAgent={updateAgent} />)}
             </div>
           </SettingsCard>
 
@@ -161,13 +194,18 @@ export function OverviewSection({ form, update }: SectionProps) {
             action={<Btn variant="secondary" data-testid="manage-providers">Gerenciar provedores</Btn>}
           >
             <div className="st-provider-grid">
-              {PROVIDERS.map((p) => <ProviderCard key={p.id} p={p} />)}
+              {AGENTS.map((a) => <ProviderCard key={a.key} p={{ id: a.key, name: a.title, description: a.description, icon: a.key }} connectProvider={connectProvider} disconnectProvider={disconnectProvider} settings={settings} />)}
             </div>
           </SettingsCard>
 
           <SettingsCard icon={<Puzzle size={18} />} title="Integrations" subtitle="Conecte ferramentas e serviços ao seu projeto.">
             <div className="st-int-list">
-              {INTEGRATIONS.map((it) => <IntegrationRow key={it.id} it={it} />)}
+              {[
+                { id: 'github', name: 'GitHub', description: 'Repositório e automações de CI/CD.', icon: 'github' },
+                { id: 'supabase', name: 'Supabase', description: 'Banco de dados e autenticação.', icon: 'supabase' },
+                { id: 'vercel', name: 'Vercel', description: 'Deploy e hospedagem.', icon: 'vercel' },
+                { id: 'asaas', name: 'Asaas', description: 'Pagamentos e cobrança.', icon: 'asaas' },
+              ].map((it) => <IntegrationRow key={it.id} it={it} connectIntegration={connectIntegration} disconnectIntegration={disconnectIntegration} settings={settings} />)}
             </div>
           </SettingsCard>
         </div>
@@ -177,16 +215,19 @@ export function OverviewSection({ form, update }: SectionProps) {
 }
 
 /* =================== MODELS & AGENTS =================== */
-export function ModelsSection({ form, update }: SectionProps) {
+export function ModelsSection(props: SectionProps) {
+  const { form, availableModels, updateAgent } = props;
+
   return (
     <div className="st-sections">
       <div className="st-section-head">
-        <h2>Models &amp; Agents</h2>
+        <h2>Models & Agents</h2>
         <p>Configure os agentes responsáveis por cada tipo de tarefa do projeto.</p>
       </div>
       <div className="st-agent-cards">
         {AGENTS.map((a) => {
           const cfg = form.agents[a.key];
+          const modelOptions = availableModels.filter(m => m.enabled).map(m => m.displayName);
           return (
             <div key={a.key} className="st-agent-card" data-testid={`agent-card-${a.key}`}>
               <div className="st-agent-card-left">
@@ -197,10 +238,10 @@ export function ModelsSection({ form, update }: SectionProps) {
                 </div>
               </div>
               <div className="st-agent-card-right">
-                <SettingsSelect value={cfg.model} options={MODEL_OPTIONS} onChange={(v) => update((f) => ({ ...f, agents: { ...f.agents, [a.key]: { ...f.agents[a.key], model: v } } }))} data-testid={`models-select-${a.key}`} />
+                <SettingsSelect value={cfg.model} options={modelOptions} onChange={(v) => updateAgent(a.key, { modelId: v })} data-testid={`models-select-${a.key}`} />
                 <div className="st-agent-toggle">
                   <span className="st-mini-label">{cfg.active ? 'Ativo' : 'Inativo'}</span>
-                  <SettingsToggle checked={cfg.active} onChange={(v) => update((f) => ({ ...f, agents: { ...f.agents, [a.key]: { ...f.agents[a.key], active: v } } }))} data-testid={`models-toggle-${a.key}`} />
+                  <SettingsToggle checked={cfg.active} onChange={() => updateAgent(a.key, { enabled: !cfg.active })} data-testid={`models-toggle-${a.key}`} />
                 </div>
               </div>
             </div>
@@ -212,7 +253,14 @@ export function ModelsSection({ form, update }: SectionProps) {
 }
 
 /* =================== GITHUB =================== */
-export function GithubSection({ form, update }: SectionProps) {
+export function GithubSection(props: SectionProps) {
+  const { form, update, updateGitHub } = props;
+
+  const handleRepoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => update(f => ({ ...f, github: { ...f.github, repo: e.target.value } })), [update]);
+  const handleBranchChange = useCallback((v: string) => update(f => ({ ...f, github: { ...f.github, branch: v } })), [update]);
+  const handleAutoSyncChange = useCallback((v: boolean) => updateGitHub({ autoSync: v }), [updateGitHub]);
+  const handleSyncNow = useCallback(async () => { await updateGitHub({ lastSyncAt: new Date().toISOString() }); }, [updateGitHub]);
+
   return (
     <div className="st-sections">
       <div className="st-section-head">
@@ -222,10 +270,10 @@ export function GithubSection({ form, update }: SectionProps) {
       <SettingsCard icon={<Icon name="github" size={18} />} title="Repositório" subtitle="Conexão e sincronização com o GitHub.">
         <div className="st-stack">
           <Field label="Repository">
-            <SettingsInput value={form.github.repo} onChange={(e) => update((f) => ({ ...f, github: { ...f.github, repo: e.target.value } }))} data-testid="github-repo" />
+            <SettingsInput value={form.github.repo} onChange={handleRepoChange} data-testid="github-repo" />
           </Field>
           <Field label="Branch">
-            <SettingsSelect value={form.github.branch} options={['main', 'develop', 'staging']} onChange={(v) => update((f) => ({ ...f, github: { ...f.github, branch: v } }))} data-testid="github-branch" />
+            <SettingsSelect value={form.github.branch} options={['main', 'develop', 'staging']} onChange={handleBranchChange} data-testid="github-branch" />
           </Field>
           <div className="st-inline-row">
             <div className="st-inline-info"><div className="st-row-title">Sync Status</div><div className="st-row-desc">Último sync há 2 minutos.</div></div>
@@ -233,13 +281,13 @@ export function GithubSection({ form, update }: SectionProps) {
           </div>
           <div className="st-inline-row">
             <div className="st-inline-info"><div className="st-row-title">Auto Sync</div><div className="st-row-desc">Sincronizar automaticamente a cada push.</div></div>
-            <SettingsToggle checked={form.github.autoSync} onChange={(v) => update((f) => ({ ...f, github: { ...f.github, autoSync: v } }))} data-testid="github-autosync" />
+            <SettingsToggle checked={form.github.autoSync} onChange={(v) => updateGitHub({ autoSync: v })} data-testid="github-autosync" />
           </div>
           <div className="st-inline-row">
             <div className="st-inline-info"><div className="st-row-title">Last Sync</div><div className="st-row-desc">Hoje, 12:12</div></div>
           </div>
           <div className="st-btn-row">
-            <Btn variant="primary" data-testid="github-sync"><RefreshCw size={15} /> Sincronizar agora</Btn>
+            <Btn variant="primary" onClick={handleSyncNow} data-testid="github-sync"><RefreshCw size={15} /> Sincronizar agora</Btn>
             <Btn variant="danger" data-testid="github-disconnect">Desconectar</Btn>
           </div>
         </div>
@@ -249,17 +297,26 @@ export function GithubSection({ form, update }: SectionProps) {
 }
 
 /* =================== INTEGRATIONS =================== */
-export function IntegrationsSection() {
-  const connected = INTEGRATIONS.filter((i) => i.state === 'connected');
-  const available = INTEGRATIONS.filter((i) => i.state !== 'connected');
+export function IntegrationsSection(props: SectionProps) {
+  const { settings, connectIntegration, disconnectIntegration } = props;
+
   return (
     <div className="st-sections">
       <div className="st-section-head"><h2>Integrations</h2><p>Conecte ferramentas e serviços ao seu projeto.</p></div>
       <SettingsCard icon={<Puzzle size={18} />} title="Connected integrations" subtitle="Serviços já conectados a este projeto.">
-        <div className="st-int-list">{connected.map((it) => <IntegrationRow key={it.id} it={it} />)}</div>
+        <div className="st-int-list">
+          {[
+            { id: 'github', name: 'GitHub', description: 'Repositório e automações de CI/CD.', icon: 'github' },
+            { id: 'supabase', name: 'Supabase', description: 'Banco de dados e autenticação.', icon: 'supabase' },
+            { id: 'vercel', name: 'Vercel', description: 'Deploy e hospedagem.', icon: 'vercel' },
+            { id: 'asaas', name: 'Asaas', description: 'Pagamentos e cobrança.', icon: 'asaas' },
+          ].map((it) => <IntegrationRow key={it.id} it={it} connectIntegration={connectIntegration} disconnectIntegration={disconnectIntegration} settings={settings} />)}
+        </div>
       </SettingsCard>
       <SettingsCard icon={<Plus size={18} />} title="Available integrations" subtitle="Conecte novos serviços.">
-        <div className="st-int-list">{available.map((it) => <IntegrationRow key={it.id} it={it} />)}</div>
+        <div className="st-int-list">
+          {[{ id: 'stripe', name: 'Stripe', description: 'Pagamentos (opcional).', icon: 'stripe' }].map((it) => <IntegrationRow key={it.id} it={it} connectIntegration={connectIntegration} disconnectIntegration={disconnectIntegration} settings={settings} />)}
+        </div>
       </SettingsCard>
     </div>
   );
@@ -273,7 +330,12 @@ const SECURITY_OPTS: { key: keyof SettingsForm['security']; label: string; desc:
   { key: 'confirm', label: 'Exigir confirmação para ações sensíveis', desc: 'Pedir aprovação antes de ações críticas.' },
   { key: 'scan', label: 'Security scan automático', desc: 'Executar verificação de segurança a cada build.' },
 ];
-export function SecuritySection({ form, update }: SectionProps) {
+
+export function SecuritySection(props: SectionProps) {
+  const { form, update: _update, updateSecurity } = props;
+
+  const handleToggle = useCallback((key: keyof SettingsForm['security']) => updateSecurity({ [key]: !form.security[key] }), [updateSecurity, form.security]);
+
   return (
     <div className="st-sections">
       <div className="st-section-head"><h2>Security</h2><p>Controle o que o agente pode fazer no seu projeto.</p></div>
@@ -282,7 +344,7 @@ export function SecuritySection({ form, update }: SectionProps) {
           {SECURITY_OPTS.map((o) => (
             <div key={o.key} className="st-inline-row">
               <div className="st-inline-info"><div className="st-row-title">{o.label}</div><div className="st-row-desc">{o.desc}</div></div>
-              <SettingsToggle checked={form.security[o.key]} onChange={(v) => update((f) => ({ ...f, security: { ...f.security, [o.key]: v } }))} data-testid={`security-${o.key}`} />
+              <SettingsToggle checked={form.security[o.key]} onChange={() => handleToggle(o.key)} data-testid={`security-${o.key}`} />
             </div>
           ))}
         </div>
@@ -292,20 +354,26 @@ export function SecuritySection({ form, update }: SectionProps) {
 }
 
 /* =================== DESIGN =================== */
-export function DesignSection({ form, update }: SectionProps) {
+export function DesignSection(props: SectionProps) {
+  const { form, update, updateDesign } = props;
+
+  const handleThemeChange = useCallback((v: string) => update(f => ({ ...f, design: { ...f.design, theme: v as SettingsForm['design']['theme'] } })), [update]);
+  const handleDeviceChange = useCallback((v: string) => update(f => ({ ...f, design: { ...f.design, device: v as SettingsForm['design']['device'] } })), [update]);
+  const handleInstructionsChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => update(f => ({ ...f, design: { ...f.design, instructions: e.target.value } })), [update]);
+
   return (
     <div className="st-sections">
       <div className="st-section-head"><h2>Design</h2><p>Preferências visuais e instruções de design do projeto.</p></div>
       <SettingsCard icon={<Palette size={18} />} title="Preferências" subtitle="Tema, dispositivo de preview e instruções.">
         <div className="st-stack">
           <Field label="Theme preference">
-            <SettingsSelect value={form.design.theme} options={['System', 'Dark', 'Light']} onChange={(v) => update((f) => ({ ...f, design: { ...f.design, theme: v as SettingsForm['design']['theme'] } }))} data-testid="design-theme" />
+            <SettingsSelect value={form.design.theme} options={['System', 'Dark', 'Light']} onChange={handleThemeChange} data-testid="design-theme" />
           </Field>
           <Field label="Default preview device">
-            <SettingsSelect value={form.design.device} options={['Desktop', 'Tablet', 'Mobile']} onChange={(v) => update((f) => ({ ...f, design: { ...f.design, device: v as SettingsForm['design']['device'] } }))} data-testid="design-device" />
+            <SettingsSelect value={form.design.device} options={['Desktop', 'Tablet', 'Mobile']} onChange={handleDeviceChange} data-testid="design-device" />
           </Field>
           <Field label="Design instructions" helper="Guie o Design Agent com diretrizes específicas.">
-            <SettingsTextarea rows={4} value={form.design.instructions} placeholder="Ex.: usar tons escuros, acento vermelho, tipografia densa…" onChange={(e) => update((f) => ({ ...f, design: { ...f.design, instructions: e.target.value } }))} data-testid="design-instructions" />
+            <SettingsTextarea rows={4} value={form.design.instructions} placeholder="Ex.: usar tons escuros, acento vermelho, tipografia densa…" onChange={handleInstructionsChange} data-testid="design-instructions" />
           </Field>
         </div>
       </SettingsCard>
@@ -314,24 +382,31 @@ export function DesignSection({ form, update }: SectionProps) {
 }
 
 /* =================== DEPLOY =================== */
-export function DeploySection({ form, update }: SectionProps) {
+export function DeploySection(props: SectionProps) {
+  const { form, update, updateDeployment } = props;
+
+  const handleProviderChange = useCallback((v: string) => update(f => ({ ...f, deploy: { ...f.deploy, provider: v } })), [update]);
+  const handleBranchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => update(f => ({ ...f, deploy: { ...f.deploy, branch: e.target.value } })), [update]);
+  const handleUrlChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => update(f => ({ ...f, deploy: { ...f.deploy, url: e.target.value } })), [update]);
+  const handleAutoDeployChange = useCallback((v: boolean) => updateDeployment({ autoDeploy: v }), [updateDeployment]);
+
   return (
     <div className="st-sections">
       <div className="st-section-head"><h2>Deploy</h2><p>Configure como e onde o projeto é publicado.</p></div>
       <SettingsCard icon={<Rocket size={18} />} title="Deployment" subtitle="Provedor e configurações de produção.">
         <div className="st-stack">
           <Field label="Deployment provider">
-            <SettingsSelect value={form.deploy.provider} options={['Vercel', 'Netlify', 'Railway', 'Emergent']} onChange={(v) => update((f) => ({ ...f, deploy: { ...f.deploy, provider: v } }))} data-testid="deploy-provider" />
+            <SettingsSelect value={form.deploy.provider} options={['Vercel', 'Netlify', 'Railway', 'Emergent']} onChange={handleProviderChange} data-testid="deploy-provider" />
           </Field>
           <Field label="Production branch">
-            <SettingsInput value={form.deploy.branch} onChange={(e) => update((f) => ({ ...f, deploy: { ...f.deploy, branch: e.target.value } }))} data-testid="deploy-branch" />
+            <SettingsInput value={form.deploy.branch} onChange={handleBranchChange} data-testid="deploy-branch" />
           </Field>
           <Field label="Production URL">
-            <SettingsInput value={form.deploy.url} onChange={(e) => update((f) => ({ ...f, deploy: { ...f.deploy, url: e.target.value } }))} data-testid="deploy-url" />
+            <SettingsInput value={form.deploy.url} onChange={handleUrlChange} data-testid="deploy-url" />
           </Field>
           <div className="st-inline-row">
             <div className="st-inline-info"><div className="st-row-title">Auto Deploy</div><div className="st-row-desc">Publicar automaticamente a cada merge na branch de produção.</div></div>
-            <SettingsToggle checked={form.deploy.autoDeploy} onChange={(v) => update((f) => ({ ...f, deploy: { ...f.deploy, autoDeploy: v } }))} data-testid="deploy-autodeploy" />
+            <SettingsToggle checked={form.deploy.autoDeploy} onChange={handleAutoDeployChange} data-testid="deploy-autodeploy" />
           </div>
           <div className="st-inline-row">
             <div className="st-inline-info"><div className="st-row-title">Deployment Status</div><div className="st-row-desc">Último deploy concluído com sucesso.</div></div>
@@ -344,7 +419,21 @@ export function DeploySection({ form, update }: SectionProps) {
 }
 
 /* =================== ENVIRONMENT =================== */
-export function EnvironmentSection() {
+export function EnvironmentSection(props: SectionProps) {
+  const { settings, upsertEnvVar, deleteEnvVar } = props;
+  const [newKey, setNewKey] = useState('');
+  const [newEnv, setNewEnv] = useState<'development' | 'preview' | 'production'>('production');
+
+  const handleAdd = useCallback(async () => {
+    if (!newKey.trim()) return;
+    await upsertEnvVar({ key: newKey.trim().toUpperCase(), environment: newEnv });
+    setNewKey('');
+  }, [upsertEnvVar, newKey, newEnv]);
+
+  const handleDelete = useCallback(async (variableId: string) => {
+    await deleteEnvVar(variableId);
+  }, [deleteEnvVar]);
+
   return (
     <div className="st-sections">
       <div className="st-section-head"><h2>Environment</h2><p>Variáveis de ambiente do projeto (valores ocultos).</p></div>
@@ -352,17 +441,23 @@ export function EnvironmentSection() {
         icon={<Variable size={18} />}
         title="Environment Variables"
         subtitle="Gerencie chaves e segredos por ambiente."
-        action={<Btn variant="primary" data-testid="env-add"><Plus size={15} /> Adicionar variável</Btn>}
+        action={
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+            <SettingsInput value={newKey} onChange={e => setNewKey(e.target.value)} placeholder="KEY_NAME" style={{ width: 180 }} />
+            <SettingsSelect value={newEnv} options={['development', 'preview', 'production']} onChange={(v) => setNewEnv(v as 'development' | 'preview' | 'production')} className="w-[140px]" />
+            <Btn variant="primary" onClick={handleAdd} data-testid="env-add"><Plus size={15} /> Adicionar</Btn>
+          </div>
+        }
       >
         <div className="st-env-list">
-          {ENV_VARS.map((v) => (
+          {settings.environmentVariables.map((v: any) => (
             <div key={v.id} className="st-env-row" data-testid={`env-${v.key}`}>
               <span className="st-env-key">{v.key}</span>
               <span className="st-env-value">••••••••••</span>
-              <StatusBadge tone="neutral" label={v.scope} dot={false} />
+              <StatusBadge tone="neutral" label={v.environment} dot={false} />
               <div className="st-env-actions">
                 <button className="st-more" aria-label="Editar"><Pencil size={15} /></button>
-                <button className="st-more danger" aria-label="Excluir"><Trash2 size={15} /></button>
+                <button className="st-more danger" aria-label="Excluir" onClick={() => handleDelete(v.id)}><Trash2 size={15} /></button>
               </div>
             </div>
           ))}
@@ -431,8 +526,10 @@ function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCancel }: { 
 export function AdvancedSection() {
   const [pending, setPending] = useState<null | { title: string; message: string; label: string }>(null);
   const [toast, setToast] = useState('');
+
   const act = (title: string, message: string, label: string) => setPending({ title, message, label });
   const confirm = () => { setToast(`${pending?.label} (simulado) concluído.`); setPending(null); setTimeout(() => setToast(''), 2500); };
+
   return (
     <div className="st-sections">
       <div className="st-section-head"><h2>Advanced</h2><p>Ações avançadas e zona de perigo.</p></div>

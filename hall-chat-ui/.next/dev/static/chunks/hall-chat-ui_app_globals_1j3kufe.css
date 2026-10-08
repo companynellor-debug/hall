@@ -1,0 +1,10 @@
+/* [project]/hall-chat-ui/app/globals.css [app-client] (css) */
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@apply bg-[#111] text-white;
+
+/*# sourceMappingURL=hall-chat-ui_app_globals_1j3kufe.css.map*/

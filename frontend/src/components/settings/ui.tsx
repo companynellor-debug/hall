@@ -59,14 +59,14 @@ export function SettingsTextarea(props: React.TextareaHTMLAttributes<HTMLTextAre
 
 /* ---- Select ---- */
 export function SettingsSelect({
-  value, onChange, options, dotTone, 'data-testid': testid,
+  value, onChange, options, dotTone, className, 'data-testid': testid,
 }: {
-  value: string; onChange: (v: string) => void; options: string[]; dotTone?: BadgeTone; 'data-testid'?: string;
+  value: string; onChange: (v: string) => void; options: string[]; dotTone?: BadgeTone; className?: string; 'data-testid'?: string;
 }) {
   return (
-    <div className="st-select">
+    <div className={`st-select ${className ?? ''}`}>
       {dotTone && <span className={`st-select-dot ${dotTone}`} />}
-      <select value={value} onChange={(e) => onChange(e.target.value)} data-testid={testid}>
+      <select value={value} onChange={(e) => onChange(e.target.value)} data-testid={testid} className={className}>
         {options.map((o) => <option key={o} value={o}>{o}</option>)}
       </select>
       <ChevronDown size={15} className="st-select-chev" />

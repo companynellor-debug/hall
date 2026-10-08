@@ -10,16 +10,19 @@ type View = 'home' | 'workspace' | 'settings';
 function App() {
   const [view, setView] = useState<View>('home');
   const [projectName, setProjectName] = useState('');
+  const [projectId, setProjectId] = useState('');
 
   const handleBackToHome = () => {
     setView('home');
     setProjectName('');
+    setProjectId('');
   };
 
   const handleImportGithub = (url: string) => {
     const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
     const repoName = match ? match[2].replace(/\.git$/, '') : 'Imported Project';
     setProjectName(repoName);
+    setProjectId(repoName.toLowerCase().replace(/\s+/g, '-'));
     setView('workspace');
   };
 
@@ -27,6 +30,7 @@ function App() {
     const words = desc.replace(/[^a-zA-Z0-9\sÀ-ÿ]/g, '').trim().split(/\s+/).slice(0, 3).join(' ');
     const projectName = words || 'Novo Projeto';
     setProjectName(projectName);
+    setProjectId(projectName.toLowerCase().replace(/\s+/g, '-'));
     setView('workspace');
   };
 
@@ -36,11 +40,12 @@ function App() {
 
   return (
     <div className="app">
-      <Background />
+      {view !== 'settings' && <Background />}
       {view === 'home' ? (
         <HomeScreen onCreate={handleCreateProject} onImportGithub={handleImportGithub} onOpenSettings={handleOpenSettings} />
       ) : view === 'settings' ? (
         <ProjectSettings
+          projectId={projectId || 'default-project'}
           projectName={projectName}
           onHome={handleBackToHome}
           onOpenProject={() => setView('workspace')}
