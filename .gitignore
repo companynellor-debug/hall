@@ -29,3 +29,5 @@ credentials.json
 *.pem
 *.key
 .credentials
+
+hall-chat-ui/.next/

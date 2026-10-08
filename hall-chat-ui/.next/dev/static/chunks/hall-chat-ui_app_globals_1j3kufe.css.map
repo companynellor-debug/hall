@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Desktop/hall/hall-chat-ui/app/globals.css"],"sourcesContent":["@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\nbody {\n  @apply bg-[#111111] text-white;\n}\n"],"names":[],"mappings":"AAAA;;AACA;;AACA;;AAGE"}}]
-}
