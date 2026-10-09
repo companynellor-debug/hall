@@ -44,5 +44,5 @@
   "seed_data_creation": "none - frontend-only mock data used by the feature.",
   "retest_needed": false,
   "should_main_agent_self_test": false,
-  "context_for_next_testing_agent": "App is Vite + React + TS with state-based routing (no URL changes). Public URL: https://hallrepo-import.preview.emergentagent.com. There is no /app/frontend/.env file; the frontend is served by `yarn start` on port 3000 via supervisor. To reach Project Settings: fill the first textarea on Home -> click button[aria-label='Enviar prompt'] -> on workspace click [data-testid='ws-settings-btn']. All settings data is mocked in components/settings/data.ts; Save/Discard uses JSON compare for dirty state. No backend calls are made from Settings."
+  "context_for_next_testing_agent": "App is Vite + React + TS with state-based routing (no URL changes). Public URL: https://hall-space-1.preview.emergentagent.com. There is no /app/frontend/.env file; the frontend is served by `yarn start` on port 3000 via supervisor. To reach Project Settings: fill the first textarea on Home -> click button[aria-label='Enviar prompt'] -> on workspace click [data-testid='ws-settings-btn']. All settings data is mocked in components/settings/data.ts; Save/Discard uses JSON compare for dirty state. No backend calls are made from Settings."
 }
