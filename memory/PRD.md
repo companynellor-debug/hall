@@ -56,3 +56,9 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 - Seções (`sections.tsx`): Overview (Project Overview 4 campos, Agent Responsibilities, Project Health, Connected Providers, Integrations), Models & Agents, GitHub, Integrations, Security, Design, Deploy, Environment, Logs, Advanced (Danger Zone com diálogo de confirmação). Tudo MOCK (sem backend/API/OAuth, conforme pedido).
 - Primitivos reutilizáveis em `ui.tsx` (SettingsCard, StatusBadge, Field, Input, Textarea, Select, Toggle, Btn). CSS em `settings.css`.
 - Verificado pelo testing_agent: 100% (13/13 critérios). tsc + oxlint sem erros.
+
+## 2026-06 — Bug fix: Project Settings tela preta
+- Corrigido erro de ordem de hooks em ProjectSettings.tsx (useCallback após early returns)
+- Passado prop `settings` faltante para as seções (crash em `providers`)
+- useProjectSettings: upsertEnvVar/deleteEnvVar agora usam wrappers corretos (ZodError) e `settings` expõe o draft
+- Testado: iteration_3 (13/13 PASS) — dados ainda MOCKADOS (mockProjectSettingsRepository)

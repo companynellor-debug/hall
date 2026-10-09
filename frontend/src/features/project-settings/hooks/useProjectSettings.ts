@@ -236,7 +236,7 @@ export function useProjectSettings({ projectId, repository }: UseProjectSettings
   const reload = useCallback(async () => { await load(); }, [load]);
 
   return {
-    settings,
+    settings: draft ?? settings,
     availableModels,
     isLoading,
     isSaving,
@@ -252,8 +252,8 @@ export function useProjectSettings({ projectId, repository }: UseProjectSettings
     disconnectProvider,
     connectIntegration,
     disconnectIntegration,
-    upsertEnvVar: service.upsertEnvironmentVariable.bind(service),
-    deleteEnvVar: service.deleteEnvironmentVariable.bind(service),
+    upsertEnvVar,
+    deleteEnvVar,
     save,
     discard,
     reload,

@@ -95,37 +95,6 @@ export function ProjectSettings({ projectId, projectName, onHome, onOpenProject 
     );
   }
 
-  // Fallback: always render something even if there's an unexpected state
-  if (!settings) {
-    console.warn('[ProjectSettings] Unexpected state: no settings, not loading, no error');
-    return (
-      <div className="st-page" data-testid="project-settings">
-        <header className="ws-topbar">
-          <div className="ws-topbar-left">
-            <button className="ws-brand" onClick={onHome} aria-label="Início" data-testid="st-home-btn">
-              <img src={hallLogo} className="ws-brand-logo" alt="HALL" />
-              <span className="ws-brand-word">HALL</span>
-            </button>
-            <nav className="ws-nav">
-              {NAV.map((n, i) => (
-                <button key={n} className={`ws-nav-item${i === 0 ? ' active' : ''}`}>{n}</button>
-              ))}
-            </nav>
-          </div>
-        </header>
-        <div className="st-scroll">
-          <div style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'300px',color:'#e53935',textAlign:'center',padding:24}}>
-            <div>
-              <p style={{fontSize:16,fontWeight:600,marginBottom:8}}>Não foi possível carregar as configurações</p>
-              <p style={{fontSize:13,color:'#8a8d93',marginBottom:16}}>O projeto pode não existir ou houve um erro de conexão.</p>
-              <button onClick={() => window.location.reload()} style={{padding:'10px 20px',background:'#e53935',color:'#fff',border:'none',borderRadius:6,cursor:'pointer'}}>Tentar novamente</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="st-page" data-testid="project-settings">
