@@ -152,8 +152,9 @@ export function ProjectSettings({ projectId, projectName, onHome, onOpenProject 
     );
   }
 
-  const renderSection = useCallback(() => {
+  const renderSection = () => {
     const baseProps = {
+      settings,
       form,
       update,
       savedForm,
@@ -195,7 +196,7 @@ export function ProjectSettings({ projectId, projectName, onHome, onOpenProject 
       case 'advanced':
         return <AdvancedSection />;
     }
-  }, [active, form, update, savedForm, setForm, availableModels, updateProject, updateAgent, updateSecurity, updateDesign, updateDeployment, updateGitHub, connectProvider, disconnectProvider, connectIntegration, disconnectIntegration, upsertEnvVar, deleteEnvVar, save, discard]);
+  };
 
   return (
     <div className="st-page" data-testid="project-settings">
