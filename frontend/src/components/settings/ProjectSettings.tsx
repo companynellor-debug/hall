@@ -44,6 +44,9 @@ export function ProjectSettings({ projectId, projectName, onHome, onOpenProject 
     disconnectIntegration,
     upsertEnvVar,
     deleteEnvVar,
+    archiveProject,
+    resetSettings,
+    deleteProject,
     save,
     discard,
   } = useProjectSettings({ projectId, repository: mockProjectSettingsRepository });
@@ -163,7 +166,14 @@ export function ProjectSettings({ projectId, projectName, onHome, onOpenProject 
       case 'logs':
         return <LogsSection />;
       case 'advanced':
-        return <AdvancedSection />;
+        return (
+          <AdvancedSection
+            archiveProject={archiveProject}
+            resetSettings={resetSettings}
+            deleteProject={deleteProject}
+            onDeleted={onHome}
+          />
+        );
     }
   };
 
@@ -232,7 +242,9 @@ export function ProjectSettings({ projectId, projectName, onHome, onOpenProject 
 
           <main className="st-content">
             <div className="st-savebar">
-              <span className="st-savebar-label">Última atualização há 5 minutos</span>
+              <span className="st-savebar-label">
+                Última atualização: {new Date(settings.project.updatedAt).toLocaleString('pt-BR')}
+              </span>
               <Btn variant="secondary" onClick={onDiscard} disabled={!dirty} data-testid="discard-btn">Descartar</Btn>
               <Btn variant="primary" onClick={onSave} disabled={!dirty || isSaving} data-testid="save-btn">
                 {isSaving ? 'Salvando...' : 'Salvar alterações'}

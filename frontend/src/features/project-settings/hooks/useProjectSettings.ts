@@ -32,6 +32,10 @@ interface UseProjectSettingsReturn {
   upsertEnvVar: (input: any) => Promise<void>;
   deleteEnvVar: (variableId: string) => Promise<void>;
 
+  archiveProject: () => Promise<void>;
+  resetSettings: () => Promise<void>;
+  deleteProject: () => Promise<void>;
+
   save: () => Promise<void>;
   discard: () => void;
   reload: () => Promise<void>;
@@ -135,6 +139,7 @@ export function useProjectSettings({ projectId, repository }: UseProjectSettings
     try {
       const provider = await service.connectProvider(projectId, input);
       setDraft(prev => prev ? ({ ...prev, providers: [...prev.providers.filter((p: any) => p.providerKey !== input.providerKey), provider] }) : null);
+      setAvailableModels(await repoRef.current.getAvailableModels(projectId));
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to connect provider'));
     }
@@ -144,7 +149,8 @@ export function useProjectSettings({ projectId, repository }: UseProjectSettings
     if (!repoRef.current || !draft) return;
     try {
       await service.disconnectProvider(projectId, providerKey);
-      setDraft(prev => prev ? ({ ...prev, providers: prev.providers.map((p: any) => p.providerKey === providerKey ? { ...p, status: 'disconnected' } : p) }) : null);
+      setDraft(prev => prev ? ({ ...prev, providers: prev.providers.filter((p: any) => p.providerKey !== providerKey) }) : null);
+      setAvailableModels(await repoRef.current.getAvailableModels(projectId));
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to disconnect provider'));
     }
@@ -164,7 +170,7 @@ export function useProjectSettings({ projectId, repository }: UseProjectSettings
     if (!repoRef.current || !draft) return;
     try {
       await service.disconnectIntegration(projectId, integrationKey);
-      setDraft(prev => prev ? ({ ...prev, integrations: prev.integrations.map((i: any) => i.integrationKey === integrationKey ? { ...i, status: 'disconnected' } : i) }) : null);
+      setDraft(prev => prev ? ({ ...prev, integrations: prev.integrations.filter((i: any) => i.integrationKey !== integrationKey) }) : null);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to disconnect integration'));
     }
@@ -233,6 +239,37 @@ export function useProjectSettings({ projectId, repository }: UseProjectSettings
     if (settings) setDraft(createDraft(settings));
   }, [settings]);
 
+  const archiveProject = useCallback(async () => {
+    if (!repoRef.current) return;
+    try {
+      await service.archiveProject(projectId);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to archive project'));
+    }
+  }, [projectId, service, load]);
+
+  const resetSettings = useCallback(async () => {
+    if (!repoRef.current) return;
+    try {
+      await service.resetSettings(projectId);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to reset settings'));
+    }
+  }, [projectId, service, load]);
+
+  const deleteProject = useCallback(async () => {
+    if (!repoRef.current) return;
+    try {
+      await service.deleteProject(projectId);
+      setSettings(null);
+      setDraft(null);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to delete project'));
+    }
+  }, [projectId, service]);
+
   const reload = useCallback(async () => { await load(); }, [load]);
 
   return {
@@ -254,6 +291,9 @@ export function useProjectSettings({ projectId, repository }: UseProjectSettings
     disconnectIntegration,
     upsertEnvVar,
     deleteEnvVar,
+    archiveProject,
+    resetSettings,
+    deleteProject,
     save,
     discard,
     reload,

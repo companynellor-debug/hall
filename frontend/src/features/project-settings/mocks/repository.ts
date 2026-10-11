@@ -1,197 +1,104 @@
 import { delay, generateId } from '../utils/helpers';
 import type { ProjectSettingsRepository } from '../repositories';
-import type {
-  ProjectSettings,
-  Project,
-  AvailableModel,
-  AgentAssignment,
-  ProviderConnection,
-  IntegrationConnection,
-  GitHubSettings,
-  SecuritySettings,
-  DesignSettings,
-  DeploymentSettings,
-  EnvironmentVariableMeta,
-  ProjectHealth,
-  UpdateProjectInput,
-  UpdateAgentInput,
-  UpdateSecuritySettingsInput,
-  UpdateDesignSettingsInput,
-  UpdateDeploymentSettingsInput,
-  UpdateGitHubSettingsInput,
-  ConnectProviderInput,
-  ConnectIntegrationInput,
-  EnvironmentVariableInput,
-  AgentRole,
-  ProjectStatus,
-  ConnectionStatus,
-} from '../types';
+import type { AvailableModel, ProjectSettings } from '../types';
 
-function createDefaultProject(projectId: string, projectName: string): Project {
-  return {
-    id: projectId,
-    workspaceId: 'ws-1',
-    name: projectName,
-    slug: projectName.toLowerCase().replace(/\s+/g, '-'),
-    description: 'Plataforma de gestão e automação para pequenas e médias empresas.',
-    status: 'active',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-}
+/* ===================== Catálogos do produto (não são dados do projeto) ===================== */
 
-function createDefaultAgents(projectId: string): AgentAssignment[] {
-  const roles: AgentRole[] = ['coding', 'design', 'security', 'review'];
-  const models = ['DeepSeek', 'GLM-5', 'Nemotron', 'Qwen'];
-  return roles.map((role, i) => ({
-    id: generateId(),
-    projectId,
-    role,
-    providerId: 'openrouter',
-    modelId: models[i],
-    enabled: true,
-  }));
-}
+const PROVIDER_CATALOG: Record<string, { displayName: string; description: string; models: AvailableModel[] }> = {
+  nvidia: {
+    displayName: 'NVIDIA',
+    description: 'Modelos Nemotron, infraestrutura GPU.',
+    models: [
+      { id: 'nemotron', providerId: 'nvidia', name: 'nemotron', displayName: 'Nemotron', enabled: true, capabilities: ['coding', 'reasoning'] },
+    ],
+  },
+  openrouter: {
+    displayName: 'OpenRouter',
+    description: 'Acesso a múltiplos modelos (DeepSeek, Qwen, GLM, Claude).',
+    models: [
+      { id: 'deepseek', providerId: 'openrouter', name: 'deepseek', displayName: 'DeepSeek', enabled: true, capabilities: ['coding', 'reasoning'] },
+      { id: 'glm-5', providerId: 'openrouter', name: 'glm-5', displayName: 'GLM-5', enabled: true, capabilities: ['coding', 'general'] },
+      { id: 'qwen', providerId: 'openrouter', name: 'qwen', displayName: 'Qwen', enabled: true, capabilities: ['coding', 'multilingual'] },
+      { id: 'claude-sonnet', providerId: 'openrouter', name: 'claude-sonnet', displayName: 'Claude Sonnet', enabled: true, capabilities: ['coding', 'reasoning', 'analysis'] },
+      { id: 'gpt-4', providerId: 'openrouter', name: 'gpt-4', displayName: 'GPT-4', enabled: true, capabilities: ['coding', 'reasoning', 'general'] },
+    ],
+  },
+};
 
-function createDefaultProviders(projectId: string): ProviderConnection[] {
-  return [
-    {
-      id: generateId(),
-      projectId,
-      providerKey: 'nvidia',
-      displayName: 'NVIDIA',
-      status: 'connected',
-      capabilities: ['Nemotron', 'GPU Infrastructure'],
-      connectedAt: new Date().toISOString(),
-    },
-    {
-      id: generateId(),
-      projectId,
-      providerKey: 'openrouter',
-      displayName: 'OpenRouter',
-      status: 'connected',
-      capabilities: ['DeepSeek', 'Qwen', 'GLM', 'Claude'],
-      connectedAt: new Date().toISOString(),
-    },
-  ];
-}
+const INTEGRATION_CATALOG: Record<string, { displayName: string; description: string; category: string }> = {
+  github: { displayName: 'GitHub', description: 'Repositório e automações de CI/CD.', category: 'version-control' },
+  supabase: { displayName: 'Supabase', description: 'Banco de dados e autenticação.', category: 'database' },
+  vercel: { displayName: 'Vercel', description: 'Deploy e hospedagem.', category: 'hosting' },
+  asaas: { displayName: 'Asaas', description: 'Pagamentos e cobrança.', category: 'payments' },
+  stripe: { displayName: 'Stripe', description: 'Pagamentos e cobrança internacional.', category: 'payments' },
+};
 
-function createDefaultIntegrations(projectId: string): IntegrationConnection[] {
-  return [
-    { id: generateId(), projectId, integrationKey: 'github', displayName: 'GitHub', description: 'Repositório e automações de CI/CD.', category: 'version-control', status: 'connected' },
-    { id: generateId(), projectId, integrationKey: 'supabase', displayName: 'Supabase', description: 'Banco de dados e autenticação.', category: 'database', status: 'connected' },
-    { id: generateId(), projectId, integrationKey: 'vercel', displayName: 'Vercel', description: 'Deploy e hospedagem.', category: 'hosting', status: 'connected' },
-    { id: generateId(), projectId, integrationKey: 'asaas', displayName: 'Asaas', description: 'Pagamentos e cobrança.', category: 'payments', status: 'connected' },
-    { id: generateId(), projectId, integrationKey: 'stripe', displayName: 'Stripe', description: 'Pagamentos (opcional).', category: 'payments', status: 'disconnected' },
-  ];
-}
+/* ===================== Estado inicial: totalmente vazio ===================== */
 
-function createDefaultGitHub(): GitHubSettings {
-  return { connected: true, repositoryFullName: 'companynellor-debug/hall', defaultBranch: 'main', autoSync: true, lastSyncAt: new Date().toISOString() };
-}
+const projectCache = new Map<string, ProjectSettings>();
 
-function createDefaultSecurity(): SecuritySettings {
-  return { allowAgentDependencyInstall: true, allowAgentEnvironmentChanges: false, allowAgentDeployments: false, requireApprovalForSensitiveActions: true, securityScanEnabled: true };
-}
-
-function createDefaultDesign(): DesignSettings {
-  return { preferredTheme: 'system', previewDevice: 'desktop', designInstructions: '' };
-}
-
-function createDefaultDeployment(): DeploymentSettings {
-  return { provider: 'Vercel', productionUrl: 'https://app.hall.com', productionBranch: 'main', autoDeploy: true, status: 'ready' };
-}
-
-function createDefaultEnvironmentVariables(projectId: string) {
-  return [
-    { id: generateId(), key: 'API_URL', environment: 'production', hasValue: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-    { id: generateId(), key: 'DATABASE_URL', environment: 'production', hasValue: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-    { id: generateId(), key: 'NEXT_PUBLIC_APP_URL', environment: 'preview', hasValue: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-  ];
-}
-
-function createDefaultHealth() {
-  return {
-    build: { status: 'ok', message: 'Último build concluído há 12 minutos', checkedAt: new Date().toISOString() },
-    security: { status: 'warning', message: '1 alerta requer atenção', checkedAt: new Date().toISOString() },
-    webhooks: { status: 'ok', message: 'Recebendo eventos normalmente', checkedAt: new Date().toISOString() },
-  };
-}
-
-function createDefaultModels(): AvailableModel[] {
-  return [
-    { id: 'deepseek', providerId: 'openrouter', name: 'deepseek', displayName: 'DeepSeek', enabled: true, capabilities: ['coding', 'reasoning'] },
-    { id: 'glm-5', providerId: 'openrouter', name: 'glm-5', displayName: 'GLM-5', enabled: true, capabilities: ['coding', 'general'] },
-    { id: 'nemotron', providerId: 'nvidia', name: 'nemotron', displayName: 'Nemotron', enabled: true, capabilities: ['coding', 'reasoning'] },
-    { id: 'qwen', providerId: 'openrouter', name: 'qwen', displayName: 'Qwen', enabled: true, capabilities: ['coding', 'multilingual'] },
-    { id: 'claude-sonnet', providerId: 'openrouter', name: 'claude-sonnet', displayName: 'Claude Sonnet', enabled: true, capabilities: ['coding', 'reasoning', 'analysis'] },
-    { id: 'gpt-4', providerId: 'openrouter', name: 'gpt-4', displayName: 'GPT-4', enabled: true, capabilities: ['coding', 'reasoning', 'general'] },
-  ];
-}
-
-const projectCache = new Map<string, { project: any; agents: any[]; providers: any[]; integrations: any[]; github: any; security: any; design: any; deployment: any; environmentVariables: any[]; health: any }>();
-
-function getOrCreateProject(projectId: string, projectName: string) {
+function getOrCreateProject(projectId: string, projectName: string): ProjectSettings {
   let cached = projectCache.get(projectId);
   if (!cached) {
-    const project = { id: projectId, workspaceId: 'ws-1', name: projectName, slug: projectName.toLowerCase().replace(/\s+/g, '-'), description: 'Plataforma de gestão e automação para pequenas e médias empresas.', status: 'active', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    const now = new Date().toISOString();
     cached = {
-      project,
+      project: {
+        id: projectId,
+        workspaceId: 'ws-1',
+        name: projectName,
+        slug: projectName.toLowerCase().replace(/\s+/g, '-'),
+        description: '',
+        status: 'active',
+        createdAt: now,
+        updatedAt: now,
+      },
       agents: [
-        { id: '1', projectId, role: 'coding', providerId: 'openrouter', modelId: 'deepseek', enabled: true },
-        { id: '2', projectId, role: 'design', providerId: 'openrouter', modelId: 'glm-5', enabled: true },
-        { id: '3', projectId, role: 'security', providerId: 'nvidia', modelId: 'nemotron', enabled: true },
-        { id: '4', projectId, role: 'review', providerId: 'openrouter', modelId: 'qwen', enabled: true },
+        { id: generateId(), projectId, role: 'coding', enabled: false },
+        { id: generateId(), projectId, role: 'design', enabled: false },
+        { id: generateId(), projectId, role: 'security', enabled: false },
+        { id: generateId(), projectId, role: 'review', enabled: false },
       ],
-      providers: [
-        { id: '1', projectId, providerKey: 'nvidia', displayName: 'NVIDIA', status: 'connected', capabilities: ['Nemotron'], connectedAt: new Date().toISOString() },
-        { id: '2', projectId, providerKey: 'openrouter', displayName: 'OpenRouter', status: 'connected', capabilities: ['DeepSeek', 'Qwen'], connectedAt: new Date().toISOString() },
-      ],
-      integrations: [
-        { id: '1', projectId, integrationKey: 'github', displayName: 'GitHub', description: 'Repositório', category: 'version-control', status: 'connected' },
-        { id: '2', projectId, integrationKey: 'supabase', displayName: 'Supabase', description: 'Banco', category: 'database', status: 'connected' },
-        { id: '3', projectId, integrationKey: 'vercel', displayName: 'Vercel', description: 'Deploy', category: 'hosting', status: 'connected' },
-        { id: '4', projectId, integrationKey: 'asaas', displayName: 'Asaas', description: 'Pagamentos', category: 'payments', status: 'connected' },
-        { id: '5', projectId, integrationKey: 'stripe', displayName: 'Stripe', description: 'Pagamentos', category: 'payments', status: 'disconnected' },
-      ],
-      github: { connected: true, repositoryFullName: 'companynellor-debug/hall', defaultBranch: 'main', autoSync: true, lastSyncAt: new Date().toISOString() },
-      security: { allowAgentDependencyInstall: true, allowAgentEnvironmentChanges: false, allowAgentDeployments: false, requireApprovalForSensitiveActions: true, securityScanEnabled: true },
+      providers: [],
+      integrations: [],
+      github: { connected: false },
+      security: {
+        allowAgentDependencyInstall: false,
+        allowAgentEnvironmentChanges: false,
+        allowAgentDeployments: false,
+        requireApprovalForSensitiveActions: true,
+        securityScanEnabled: false,
+      },
       design: { preferredTheme: 'system', previewDevice: 'desktop', designInstructions: '' },
-      deployment: { provider: 'Vercel', productionUrl: 'https://app.hall.com', productionBranch: 'main', autoDeploy: true, status: 'ready' },
-      environmentVariables: [
-        { id: '1', key: 'API_URL', environment: 'production', hasValue: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-        { id: '2', key: 'DATABASE_URL', environment: 'production', hasValue: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-        { id: '3', key: 'NEXT_PUBLIC_APP_URL', environment: 'preview', hasValue: true, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() },
-      ],
-      health: { build: { status: 'ok', message: 'OK', checkedAt: new Date().toISOString() }, security: { status: 'warning', message: '1 alerta', checkedAt: new Date().toISOString() }, webhooks: { status: 'ok', message: 'OK', checkedAt: new Date().toISOString() } },
+      deployment: { autoDeploy: false, status: 'not_configured' },
+      environmentVariables: [],
+      health: {
+        build: { status: 'unknown' },
+        security: { status: 'unknown' },
+        webhooks: { status: 'unknown' },
+      },
     };
     projectCache.set(projectId, cached);
   }
   return cached;
 }
 
-export const mockProjectSettingsRepository: import('../repositories').ProjectSettingsRepository = {
+export const mockProjectSettingsRepository: ProjectSettingsRepository = {
   async getProjectSettings(projectId: string) {
     await delay(100);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
-    return cached;
+    return getOrCreateProject(projectId, 'Novo Projeto');
   },
 
   async getAvailableModels(projectId: string) {
     await delay(50);
-    return [
-      { id: 'deepseek', providerId: 'openrouter', name: 'deepseek', displayName: 'DeepSeek', enabled: true, capabilities: ['coding'] },
-      { id: 'glm-5', providerId: 'openrouter', name: 'glm-5', displayName: 'GLM-5', enabled: true, capabilities: ['coding'] },
-      { id: 'nemotron', providerId: 'nvidia', name: 'nemotron', displayName: 'Nemotron', enabled: true, capabilities: ['coding'] },
-      { id: 'qwen', providerId: 'openrouter', name: 'qwen', displayName: 'Qwen', enabled: true, capabilities: ['coding'] },
-      { id: 'claude-sonnet', providerId: 'openrouter', name: 'claude-sonnet', displayName: 'Claude Sonnet', enabled: true, capabilities: ['coding'] },
-      { id: 'gpt-4', providerId: 'openrouter', name: 'gpt-4', displayName: 'GPT-4', enabled: true, capabilities: ['coding'] },
-    ];
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
+    return cached.providers
+      .filter((p) => p.status === 'connected')
+      .flatMap((p) => PROVIDER_CATALOG[p.providerKey]?.models ?? []);
   },
 
   async updateProject(projectId: string, input: any) {
     await delay(200);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
     if (input.name !== undefined) cached.project.name = input.name;
     if (input.description !== undefined) cached.project.description = input.description;
     if (input.status !== undefined) cached.project.status = input.status;
@@ -201,8 +108,8 @@ export const mockProjectSettingsRepository: import('../repositories').ProjectSet
 
   async updateAgent(projectId: string, role: string, input: any) {
     await delay(200);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
-    const agent = cached.agents.find((a: any) => a.role === role);
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
+    const agent = cached.agents.find((a) => a.role === role);
     if (!agent) throw new Error(`Agent ${role} not found`);
     if (input.providerId !== undefined) agent.providerId = input.providerId;
     if (input.modelId !== undefined) agent.modelId = input.modelId;
@@ -212,68 +119,99 @@ export const mockProjectSettingsRepository: import('../repositories').ProjectSet
 
   async updateSecuritySettings(projectId: string, input: any) {
     await delay(200);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
     Object.assign(cached.security, input);
     return cached.security;
   },
 
   async updateDesignSettings(projectId: string, input: any) {
     await delay(200);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
     Object.assign(cached.design, input);
     return cached.design;
   },
 
   async updateDeploymentSettings(projectId: string, input: any) {
     await delay(200);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
     Object.assign(cached.deployment, input);
+    if (cached.deployment.provider && cached.deployment.status === 'not_configured') {
+      cached.deployment.status = 'ready';
+    }
     return cached.deployment;
   },
 
   async updateGitHubSettings(projectId: string, input: any) {
     await delay(200);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
     Object.assign(cached.github, input);
+    cached.project.updatedAt = new Date().toISOString();
     return cached.github;
   },
 
   async connectProvider(projectId: string, input: any) {
     await delay(500);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
-    const provider: any = { id: 'new', projectId, providerKey: input.providerKey, displayName: input.providerKey, status: 'connected' as const, connectedAt: new Date().toISOString() };
-    cached.providers = cached.providers.filter((p: any) => p.providerKey !== input.providerKey);
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
+    const catalog = PROVIDER_CATALOG[input.providerKey];
+    const provider = {
+      id: generateId(),
+      projectId,
+      providerKey: input.providerKey,
+      displayName: catalog?.displayName ?? input.providerKey,
+      status: 'connected' as const,
+      capabilities: catalog?.models.map((m) => m.displayName),
+      connectedAt: new Date().toISOString(),
+      metadata: input.metadata,
+    };
+    cached.providers = cached.providers.filter((p) => p.providerKey !== input.providerKey);
     cached.providers.push(provider);
     return { provider };
   },
 
   async disconnectProvider(projectId: string, providerKey: string) {
     await delay(300);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
-    cached.providers = cached.providers.map((p: any) => p.providerKey === providerKey ? { ...p, status: 'disconnected' } : p);
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
+    cached.providers = cached.providers.filter((p) => p.providerKey !== providerKey);
   },
 
   async connectIntegration(projectId: string, input: any) {
     await delay(500);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
-    const integration: any = { id: 'new', projectId, integrationKey: input.integrationKey, displayName: input.integrationKey, status: 'connected' as const };
-    cached.integrations = cached.integrations.filter((i: any) => i.integrationKey !== input.integrationKey);
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
+    const catalog = INTEGRATION_CATALOG[input.integrationKey];
+    const integration = {
+      id: generateId(),
+      projectId,
+      integrationKey: input.integrationKey,
+      displayName: catalog?.displayName ?? input.integrationKey,
+      description: catalog?.description,
+      category: catalog?.category,
+      status: 'connected' as const,
+      metadata: input.metadata,
+    };
+    cached.integrations = cached.integrations.filter((i) => i.integrationKey !== input.integrationKey);
     cached.integrations.push(integration);
     return { integration };
   },
 
   async disconnectIntegration(projectId: string, integrationKey: string) {
     await delay(300);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
-    cached.integrations = cached.integrations.map((i: any) => i.integrationKey === integrationKey ? { ...i, status: 'disconnected' } : i);
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
+    cached.integrations = cached.integrations.filter((i) => i.integrationKey !== integrationKey);
   },
 
   async upsertEnvironmentVariable(projectId: string, input: any) {
     await delay(200);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
-    let variable = cached.environmentVariables.find((v: any) => v.key === input.key && v.environment === input.environment);
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
+    let variable = cached.environmentVariables.find((v) => v.key === input.key && v.environment === input.environment);
     if (!variable) {
-      variable = { id: 'new', key: input.key, environment: input.environment, hasValue: !!input.value, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+      variable = {
+        id: generateId(),
+        key: input.key,
+        environment: input.environment,
+        hasValue: !!input.value,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
       cached.environmentVariables.push(variable);
     } else {
       variable.hasValue = !!input.value;
@@ -284,14 +222,15 @@ export const mockProjectSettingsRepository: import('../repositories').ProjectSet
 
   async deleteEnvironmentVariable(projectId: string, variableId: string) {
     await delay(200);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
-    cached.environmentVariables = cached.environmentVariables.filter((v: any) => v.id !== variableId);
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
+    cached.environmentVariables = cached.environmentVariables.filter((v) => v.id !== variableId);
   },
 
   async archiveProject(projectId: string) {
     await delay(300);
-    const cached = getOrCreateProject(projectId, 'Hall Project');
+    const cached = getOrCreateProject(projectId, 'Novo Projeto');
     cached.project.status = 'archived';
+    cached.project.updatedAt = new Date().toISOString();
     return cached.project;
   },
 
