@@ -4,6 +4,7 @@ import { Icon } from '../ui/Icon';
 import { ImportGithub } from './ImportGithub';
 import { OrbitingCirclesGlobe } from './OrbitingCirclesGlobe';
 import WireframeForms from '../ui/wireframe-forms';
+import { ShinyButton } from '../ui/ShinyButton';
 
 const PLACEHOLDERS = [
   'Ex.: um SaaS para gerenciar meus clientes, com autenticação e um painel moderno…',
@@ -127,14 +128,17 @@ export function HallHero({ onSubmit, onImportGithub, onOpenSettings }: { onSubmi
             <ImportGithub onImport={onImportGithub} />
           </div>
 
-          <button
+          <ShinyButton
             type="submit"
-            className="build-btn fluid-glass"
+            iconSize={48}
+            cornerRadius={12}
             disabled={!description.trim()}
-            aria-label="Enviar prompt"
+            label="Enviar prompt"
+            title="Enviar prompt"
+            testId="home-send-btn"
           >
             <Icon name="arrow-right" size={18} />
-          </button>
+          </ShinyButton>
         </div>
       </form>
       <OrbitingCirclesGlobe />

@@ -14,25 +14,25 @@ type RailId = 'changes' | 'files' | 'health';
 
 interface Props {
   projectName: string;
+  chatTab?: 'chat' | 'tarefas';
+  onChatTabChange?: (tab: 'chat' | 'tarefas') => void;
+  previewTab?: PreviewTab;
+  onPreviewTabChange?: (tab: PreviewTab) => void;
+  rail?: RailId;
+  onRailChange?: (id: RailId) => void;
 }
 
-function RailIcon({ id }: { id: RailId }) {
-  const p = { width: 20, height: 20, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
-  if (id === 'changes') return <svg {...p}><path d="M9 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h8M14 3l5 5M14 3v5h5M19 14v7M15.5 17.5h7" /></svg>;
-  if (id === 'files') return <svg {...p}><path d="M3 7a1 1 0 0 1 1-1h5l2 2.5h8a1 1 0 0 1 1 1V18a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Z" /></svg>;
-  return <svg {...p}><path d="M3 12h4l2 6 4-14 2 8h6" /></svg>;
-}
-
-export function WorkspaceLayout({ projectName }: Props) {
-  const [previewTab, setPreviewTab] = useState<PreviewTab>('preview');
+export function WorkspaceLayout({ projectName, chatTab, onChatTabChange, previewTab: previewTabProp, onPreviewTabChange }: Props) {
+  const [internalPreviewTab, setInternalPreviewTab] = useState<PreviewTab>('preview');
+  const previewTab = previewTabProp ?? internalPreviewTab;
+  const setPreviewTab = (t: PreviewTab) => { setInternalPreviewTab(t); onPreviewTabChange?.(t); };
   const [device, setDevice] = useState<Device>('desktop');
-  const [rail, setRail] = useState<RailId>('changes');
 
   return (
     <div className="ws-body">
       {/* Left — Chat */}
       <aside className="ws-chat-region" data-testid="chat-region">
-        <ChatPane />
+        <ChatPane activeTab={chatTab} onTabChange={onChatTabChange} />
       </aside>
 
       {/* Center — Preview */}
@@ -69,10 +69,13 @@ export function WorkspaceLayout({ projectName }: Props) {
 
         {previewTab === 'preview' && (
           <div className="ws-pv-bar">
-            <div className="ws-pv-nav">
-              <button className="ws-pv-navbtn" title="Voltar"><IconArrowLeft size={15} /></button>
-              <button className="ws-pv-navbtn" title="Avançar"><IconArrowRight size={15} /></button>
-              <button className="ws-pv-navbtn" title="Recarregar"><IconRefresh size={15} /></button>
+            <div className="ws-pv-bar-left">
+              <div className="ws-pv-nav">
+                <button className="ws-pv-navbtn" title="Voltar"><IconArrowLeft size={15} /></button>
+                <button className="ws-pv-navbtn" title="Avançar"><IconArrowRight size={15} /></button>
+                <button className="ws-pv-navbtn" title="Recarregar"><IconRefresh size={15} /></button>
+              </div>
+              <span className="ws-pv-sync">Último sync há 2 minutos</span>
             </div>
             <div className="ws-url">
               <IconLock size={12} />
@@ -96,29 +99,6 @@ export function WorkspaceLayout({ projectName }: Props) {
           {previewTab === 'console' && <ConsolePane />}
         </div>
       </section>
-
-      {/* Right — tool rail */}
-      <nav className="ws-rail">
-        {(['changes', 'files', 'health'] as RailId[]).map((id) => (
-          <button
-            key={id}
-            className={`ws-rail-btn${rail === id ? ' active' : ''}`}
-            onClick={() => setRail(id)}
-            data-testid={`rail-${id}`}
-          >
-            <span className="ws-rail-ico">
-              <RailIcon id={id} />
-              {id === 'changes' && <span className="ws-rail-dot" />}
-            </span>
-            <span className="ws-rail-label">
-              {id === 'changes' ? 'Changes' : id === 'files' ? 'Files' : 'Health'}
-            </span>
-          </button>
-        ))}
-        <button className="ws-rail-collapse" title="Recolher painel" data-testid="rail-collapse">
-          <Icon name="chevron-right" size={16} />
-        </button>
-      </nav>
     </div>
   );
 }

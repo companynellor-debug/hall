@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ChevronDown, MoreHorizontal, ExternalLink } from 'lucide-react';
 import { Icon } from '../ui/Icon';
 import hallLogo from '../../assets/hall-logo.png';
@@ -16,13 +16,14 @@ import './settings.css';
 interface Props {
   projectId: string;
   projectName: string;
+  initialSection?: SectionId;
   onHome: () => void;
   onOpenProject: () => void;
 }
 
 const NAV = ['Início', 'Projetos', 'Recursos', 'Comunidade'];
 
-export function ProjectSettings({ projectId, projectName, onHome, onOpenProject }: Props) {
+export function ProjectSettings({ projectId, projectName, initialSection = 'overview', onHome, onOpenProject }: Props) {
   const display = projectName || 'Nellor';
   const initial = display.charAt(0).toUpperCase();
 
@@ -51,7 +52,11 @@ export function ProjectSettings({ projectId, projectName, onHome, onOpenProject 
     discard,
   } = useProjectSettings({ projectId, repository: mockProjectSettingsRepository });
 
-  const [active, setActive] = useState<SectionId>('overview');
+  const [active, setActive] = useState<SectionId>(initialSection);
+
+  useEffect(() => {
+    setActive(initialSection);
+  }, [initialSection]);
   const [savedForm, setSavedForm] = useState<SettingsForm>(() => makeDefaultForm(display));
   const [form, setForm] = useState<SettingsForm>(() => makeDefaultForm(display));
 

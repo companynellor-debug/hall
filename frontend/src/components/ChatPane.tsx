@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon } from './ui/Icon';
+import { ShinyButton } from './ui/ShinyButton';
 import hallLogo from '../assets/hall-logo.png';
 
 type Tab = 'chat' | 'tarefas';
@@ -36,10 +37,10 @@ function StepRow({ label, state, chevron, onToggle, expanded }: {
   chevron?: boolean; onToggle?: () => void; expanded?: boolean;
 }) {
   return (
-    <button className={`ws-step ${state}`} onClick={onToggle} disabled={!chevron}>
+    <button className={`ws-step ${state}`} onClick={onToggle} disabled={!chevron} data-testid={`step-${label.toLowerCase().replace(/\s+/g, '-')}`}>
       <span className="ws-step-ico">
         {state === 'done' && (
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" opacity="0.3" /><path d="m8 12 2.5 2.5L16 9" /></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" opacity="0.25" /><path d="m7 12 3 3 5-5" /></svg>
         )}
         {state === 'running' && <span className="ws-step-spin" />}
         {state === 'pending' && <span className="ws-step-wait" />}
@@ -47,15 +48,22 @@ function StepRow({ label, state, chevron, onToggle, expanded }: {
       <span className="ws-step-label">{label}</span>
       {chevron && (
         <span className={`ws-step-chev${expanded ? ' open' : ''}`}>
-          <Icon name="chevron-down" size={14} />
+          <Icon name="chevron-down" size={12} />
         </span>
       )}
     </button>
   );
 }
 
-export function ChatPane() {
-  const [tab, setTab] = useState<Tab>('chat');
+export interface ChatPaneProps {
+  activeTab?: Tab;
+  onTabChange?: (tab: Tab) => void;
+}
+
+export function ChatPane({ activeTab, onTabChange }: ChatPaneProps = {}) {
+  const [internalTab, setInternalTab] = useState<Tab>('chat');
+  const tab = activeTab ?? internalTab;
+  const setTab = (t: Tab) => { setInternalTab(t); onTabChange?.(t); };
   const [mode, setMode] = useState<Mode>('build');
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -102,13 +110,26 @@ export function ChatPane() {
 
   return (
     <section className="ws-chat">
-      <div className="ws-chat-tabs">
-        <button className={`ws-chat-tab${tab === 'chat' ? ' active' : ''}`} onClick={() => setTab('chat')} data-testid="chat-tab-chat">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9" /></svg>
+      {/* Chat / Tarefas tabs - minimal */}
+      <div className="ws-chat-tabs" role="tablist" aria-label="Chat e Tarefas">
+        <button
+          role="tab"
+          aria-selected={tab === 'chat'}
+          className={`ws-chat-tab${tab === 'chat' ? ' active' : ''}`}
+          onClick={() => setTab('chat')}
+          data-testid="chat-tab-chat"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a8.5 8.5 0 0 1-8.5 8.5c-1.4 0-2.7-.33-3.86-.92L4 21l1.42-4.64A8.5 8.5 0 1 1 21 12Z" /></svg>
           Chat
         </button>
-        <button className={`ws-chat-tab${tab === 'tarefas' ? ' active' : ''}`} onClick={() => setTab('tarefas')} data-testid="chat-tab-tarefas">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6h11M9 12h11M9 18h11" /><path d="m4 6 1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" /></svg>
+        <button
+          role="tab"
+          aria-selected={tab === 'tarefas'}
+          className={`ws-chat-tab${tab === 'tarefas' ? ' active' : ''}`}
+          onClick={() => setTab('tarefas')}
+          data-testid="chat-tab-tarefas"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M9 6h11M9 12h11M9 18h11" /><path d="m4 6 1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" /></svg>
           Tarefas
         </button>
       </div>
@@ -116,9 +137,10 @@ export function ChatPane() {
       {tab === 'chat' ? (
         <div className="ws-chat-scroll" ref={scrollRef} data-testid="chat-scroll">
           {messages.length === 0 && (
-            <div className="ws-chat-empty">
+            <div className="ws-chat-empty" data-testid="chat-empty">
               <img src={hallLogo} alt="HALL" className="ws-chat-empty-logo" />
-              <p>Descreva uma alteração para o HALL aplicar no seu projeto.</p>
+              <h3>O que vamos construir?</h3>
+              <p>Descreva uma alteração, corrija um problema ou continue desenvolvendo seu projeto.</p>
             </div>
           )}
 
@@ -172,7 +194,7 @@ export function ChatPane() {
                       {m.stage >= 4 ? (
                         <>
                           <span className="ws-build-ico done">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" opacity="0.3" /><path d="m8 12 2.5 2.5L16 9" /></svg>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" opacity="0.25" /><path d="m7 12 3 3 5-5" /></svg>
                           </span>
                           <span className="ws-build-label">Build passou</span>
                           <span className="ws-build-time">{m.buildTime}</span>
@@ -191,16 +213,14 @@ export function ChatPane() {
                   <>
                     <div className="ws-msg-text">{m.result}</div>
                     <div className="ws-actions">
-                      <button className="ws-action-btn" data-testid="action-ver-mudancas">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" /><circle cx="12" cy="12" r="3" /></svg>
-                        Ver mudanças
+                      <button className="ws-action-btn" aria-label="Copiar" title="Copiar" data-testid="action-copy">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" /><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" /></svg>
                       </button>
-                      <button className="ws-action-btn" data-testid="action-salvar-github">
-                        <Icon name="github" size={15} />
-                        Salvar no GitHub
+                      <button className="ws-action-btn" aria-label="Gostei" title="Gostei" data-testid="action-like">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M7 10v11" /><path d="M15 5l-1.8 5H21a2 2 0 0 1 2 2.3l-1.4 7A2 2 0 0 1 19.6 21H7V10l4.3-7.1A1.5 1.5 0 0 1 14 3.4 2.6 2.6 0 0 1 15 5Z" /></svg>
                       </button>
-                      <button className="ws-action-btn icon" aria-label="Mais ações" data-testid="action-more">
-                        <Icon name="more-horizontal" size={16} />
+                      <button className="ws-action-btn" aria-label="Não gostei" title="Não gostei" data-testid="action-dislike">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M17 14V3" /><path d="M9 19l1.8-5H3a2 2 0 0 1-2-2.3l1.4-7A2 2 0 0 1 4.4 3H17v11l-4.3 7.1A1.5 1.5 0 0 1 10 20.6 2.6 2.6 0 0 1 9 19Z" /></svg>
                       </button>
                     </div>
                   </>
@@ -212,49 +232,75 @@ export function ChatPane() {
       ) : (
         <div className="ws-chat-scroll">
           <div className="ws-chat-empty">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}><path d="M9 6h11M9 12h11M9 18h11" /><path d="m4 6 1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" /></svg>
-            <p>Nenhuma tarefa ainda. As etapas de cada build aparecerão aqui.</p>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}><path d="M9 6h11M9 12h11M9 18h11" /><path d="m4 6 1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2" /></svg>
+            <h3>Nenhuma tarefa ainda</h3>
+            <p>As etapas de cada build aparecerão aqui.</p>
           </div>
         </div>
       )}
 
-      {/* Composer */}
+      {/* Composer - unified premium surface */}
       <div className="ws-composer">
         <div className="ws-composer-box">
           <textarea
             ref={inputRef}
             className="ws-composer-input"
-            placeholder="Descreva a alteração..."
+            placeholder="Descreva uma alteração, peça uma funcionalidade..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); } }}
-            rows={2}
+            rows={1}
             data-testid="composer-input"
+            style={{ minHeight: '48px' }}
           />
           <div className="ws-composer-foot">
             <div className="ws-composer-left">
-              <button className="ws-composer-icon" title="Anexar" data-testid="composer-attach">
-                <Icon name="paperclip" size={16} />
+              <button className="ws-composer-icon" title="Anexar" aria-label="Anexar" data-testid="composer-attach">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M12 5v14M5 12h14" /></svg>
               </button>
               <button className="ws-chip" data-testid="composer-project">
-                Nakor's Project
-                <Icon name="chevron-down" size={13} />
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18M7 4v16" /></svg>
+                Projeto
+                <Icon name="chevron-down" size={11} />
               </button>
-              <div className="ws-seg">
-                <button className={`ws-seg-btn${mode === 'plan' ? ' active' : ''}`} onClick={() => setMode('plan')} data-testid="mode-plan">PLAN</button>
-                <button className={`ws-seg-btn${mode === 'build' ? ' active build' : ''}`} onClick={() => setMode('build')} data-testid="mode-build">
-                  <Icon name="zap" size={12} /> BUILD
+              <div className="ws-seg" role="group" aria-label="Modo">
+                <button
+                  className={`ws-seg-btn${mode === 'plan' ? ' active' : ''}`}
+                  onClick={() => setMode('plan')}
+                  data-testid="mode-plan"
+                >
+                  PLAN
+                </button>
+                <button
+                  className={`ws-seg-btn${mode === 'build' ? ' active build' : ''}`}
+                  onClick={() => setMode('build')}
+                  data-testid="mode-build"
+                >
+                  <Icon name="zap" size={11} /> BUILD
                 </button>
               </div>
               <button className="ws-chip" data-testid="composer-model">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M4 12v0M8 8v8M12 5v14M16 8v8M20 12v0" /></svg>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round"><path d="M4 12v0M8 8v8M12 5v14M16 8v8M20 12v0" /></svg>
                 Auto
-                <Icon name="chevron-down" size={13} />
+                <Icon name="chevron-down" size={11} />
               </button>
             </div>
-            <button className="ws-send" onClick={send} disabled={!input.trim() || busy} title="Enviar" data-testid="composer-send">
-              <Icon name="arrow-right" size={18} />
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <button className="ws-composer-icon" aria-label="Mais opções" data-testid="composer-more">
+                <Icon name="more-horizontal" size={15} />
+              </button>
+              <ShinyButton
+                onClick={send}
+                disabled={!input.trim() || busy}
+                label="Enviar"
+                title="Enviar"
+                testId="composer-send"
+                iconSize={38}
+                cornerRadius={10}
+              >
+                <Icon name="arrow-right" size={17} />
+              </ShinyButton>
+            </div>
           </div>
         </div>
         <div className="ws-composer-hint">Use @ para mencionar arquivos, / para comandos</div>
