@@ -162,7 +162,7 @@ export function ProjectWorkspace({ onBack, projectName, onOpenSettings }: Projec
                 <span className="ws-chatbar-status">Projeto ativo</span>
               </span>
               <button className="ws-branch" data-testid="ws-chatbar-branch">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9fe870" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4e8a6b" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="6" cy="6" r="2.2" /><circle cx="6" cy="18" r="2.2" /><circle cx="18" cy="8" r="2.2" />
                   <path d="M6 8.2v7.6M18 10.2c0 2.8-2.2 4.4-5.5 4.4" />
                 </svg>

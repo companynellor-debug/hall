@@ -92,10 +92,10 @@ export function ProjectSettings({ projectId, projectName, initialSection = 'over
         <div className="st-scroll">
           <div className="st-loading" style={{display:'flex',alignItems:'center',justifyContent:'center',minHeight:'300px',color:'#8a8d93'}}>
             <div style={{textAlign:'center'}}>
-              <div className="st-spinner" style={{width:32,height:32,border:'3px solid #222',borderTopColor:'#e53935',borderRadius:'50%',animation:'spin 1s linear infinite',margin:'0 auto 16px'}} />
+              <div className="st-spinner" style={{width:32,height:32,border:'3px solid #e2e6df',borderTopColor:'#4e8a6b',borderRadius:'50%',animation:'spin 1s linear infinite',margin:'0 auto 16px'}} />
               <p>Carregando configurações...</p>
-              <p style={{fontSize:12,color:'#5c5c5c',marginTop:8}}>Se demorar, clique para recarregar</p>
-              <button onClick={() => window.location.reload()} style={{marginTop:16,padding:'8px 16px',background:'#e53935',color:'#fff',border:'none',borderRadius:6,cursor:'pointer'}}>Recarregar página</button>
+              <p style={{fontSize:12,color:'#9aa39a',marginTop:8}}>Se demorar, clique para recarregar</p>
+              <button onClick={() => window.location.reload()} style={{marginTop:16,padding:'8px 16px',background:'#4e8a6b',color:'#fff',border:'none',borderRadius:6,cursor:'pointer'}}>Recarregar página</button>
             </div>
           </div>
         </div>
@@ -179,6 +179,8 @@ export function ProjectSettings({ projectId, projectName, initialSection = 'over
             onDeleted={onHome}
           />
         );
+      default:
+        return <OverviewSection {...baseProps} />;
     }
   };
 

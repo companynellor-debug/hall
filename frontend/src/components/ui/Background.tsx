@@ -64,13 +64,13 @@ export default function Background() {
       aria-hidden="true"
       style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none', overflow: 'hidden' }}
     >
-      {/* Red radial spotlight (HALL accent) */}
+      {/* Green radial spotlight (HALL accent) */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           background:
-            'radial-gradient(circle 620px at 50% 180px, rgba(229,57,53,0.20), transparent 70%)',
+            'radial-gradient(circle 620px at 50% 180px, rgba(78,138,107,0.14), transparent 70%)',
         }}
       />
       {/* Faint fading grid, masked toward the top */}
@@ -79,7 +79,7 @@ export default function Background() {
           position: 'absolute',
           inset: 0,
           backgroundImage:
-            'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.035) 1px, transparent 1px)',
+            'linear-gradient(to right, rgba(78,138,107,0.07) 1px, transparent 1px), linear-gradient(to bottom, rgba(78,138,107,0.07) 1px, transparent 1px)',
           backgroundSize: '22px 26px',
           WebkitMaskImage:
             'radial-gradient(ellipse 80% 55% at 50% 12%, #000 65%, transparent 100%)',

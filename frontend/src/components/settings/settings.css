@@ -7,14 +7,14 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: #000000;
+  background: var(--color-bg);
   position: relative;
   z-index: 10;
   isolation: isolate;
-  --st-hover: rgba(255, 255, 255, 0.04);
-  --st-selected: rgba(255, 255, 255, 0.06);
-  --st-line: rgba(255, 255, 255, 0.07);
-  --st-line-strong: rgba(255, 255, 255, 0.12);
+  --st-hover: rgba(29, 36, 32, 0.05);
+  --st-selected: rgba(78, 138, 107, 0.10);
+  --st-line: rgba(29, 36, 32, 0.09);
+  --st-line-strong: rgba(29, 36, 32, 0.16);
 }
 .st-scroll { flex: 1; overflow-y: auto; padding: var(--space-5) var(--space-7) 0; min-height: 0; }
 
@@ -279,7 +279,7 @@
   transition: background 160ms ease-out, border-color 160ms ease-out;
 }
 .st-toggle-knob { display: block; width: 16px; height: 16px; border-radius: 50%; background: #6a6a6a; transition: transform 160ms ease-out, background 160ms ease-out; }
-.st-toggle.on { background: rgba(229, 57, 53, 0.75); border-color: rgba(229, 57, 53, 0.75); }
+.st-toggle.on { background: var(--color-accent); border-color: var(--color-accent); }
 .st-toggle.on .st-toggle-knob { transform: translateX(16px); background: #fff; }
 
 /* Hint text (empty states helper) */
@@ -429,9 +429,9 @@
 }
 .st-filter-chip:hover { border-color: var(--st-line-strong); color: var(--color-text-primary); background: var(--st-hover); }
 .st-filter-chip.active {
-  background: rgba(229, 57, 53, 0.12);
-  border-color: rgba(229, 57, 53, 0.35);
-  color: var(--color-accent-bright);
+  background: var(--color-accent-bg);
+  border-color: rgba(78, 138, 107, 0.35);
+  color: var(--color-accent);
 }
 .st-chip-icon { flex-shrink: 0; color: currentColor; }
 .st-chip-count {
@@ -441,10 +441,10 @@
   font-weight: 600;
   text-align: center;
   color: var(--color-text-muted);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(29, 36, 32, 0.06);
   border-radius: 999px;
 }
-.st-filter-chip.active .st-chip-count { background: rgba(229, 57, 53, 0.2); color: var(--color-accent-bright); }
+.st-filter-chip.active .st-chip-count { background: rgba(78, 138, 107, 0.2); color: var(--color-accent); }
 
 /* ===================== Integrations Hero (Lovable style) ===================== */
 .st-lov-hero {
@@ -693,3 +693,18 @@
   padding-top: var(--space-3);
   border-top: 1px solid var(--st-line);
 }
+
+/* ---- Light green theme overrides ---- */
+.st-input, .st-textarea, .st-select {
+  background: #ffffff !important;
+}
+.st-agent-cards { background: #ffffff; }
+.st-toggle { background: #e3e7e1; }
+.st-modal { background: #ffffff; box-shadow: 0 24px 60px rgba(29,36,32,0.18); }
+.st-toast { background: #ffffff; color: var(--color-text-primary); box-shadow: 0 12px 32px rgba(29,36,32,0.14); }
+.st-modal-overlay { background: rgba(29,36,32,0.35); }
+.st-more.danger:hover { color: #c0534c; background: rgba(192, 83, 76, 0.08); }
+.st-btn.danger { color: #c0534c; background: transparent; border-color: rgba(192, 83, 76, 0.3); }
+.st-btn.danger:hover:not(:disabled) { background: rgba(192, 83, 76, 0.08); border-color: rgba(192, 83, 76, 0.5); }
+.st-card.danger { border-color: rgba(192, 83, 76, 0.2); }
+.st-badge.error { color: #c0534c; background: rgba(192, 83, 76, 0.08); border-color: rgba(192, 83, 76, 0.24); }

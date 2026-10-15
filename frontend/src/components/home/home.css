@@ -1,0 +1,260 @@
+/* ---- Home estilo "Loory" ---- */
+.hl-page {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  overflow: auto;
+  background: linear-gradient(160deg, #8ba093 0%, #9dafA4 55%, #8ba093 100%);
+  padding: 22px;
+  font-family: var(--font-nav);
+  color: #1d2420;
+}
+
+.hl-shell {
+  position: relative;
+  display: flex;
+  height: calc(100vh - 44px);
+  min-height: 560px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #f2f3f1;
+}
+
+/* ---- Sidebar ---- */
+.hl-side {
+  width: 232px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 14px 14px;
+  margin: 10px 0 10px 10px;
+  border-radius: 20px;
+  background: #fcfcf9;
+}
+
+.hl-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px;
+}
+.hl-brand-logo { width: 22px; height: 22px; border-radius: 6px; }
+.hl-brand-name { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
+.hl-side-collapse {
+  margin-left: auto;
+  display: flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 6px;
+  color: #7b847d; border: 1px solid #e4e6e2;
+}
+.hl-side-collapse:hover { background: #f0f1ee; color: #1d2420; }
+
+.hl-search {
+  display: flex; align-items: center; gap: 8px;
+  height: 34px; padding: 0 10px;
+  border-radius: 10px;
+  background: #f0f1ed;
+  color: #7b847d;
+}
+.hl-search input {
+  flex: 1; min-width: 0;
+  font-size: 12.5px; color: #1d2420;
+  background: none; border: none; outline: none;
+}
+.hl-search input::placeholder { color: #9aa39c; }
+
+.hl-new-chat {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  height: 40px;
+  border-radius: 12px;
+  background: #171c18;
+  color: #fff;
+  font-size: 13px; font-weight: 600;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.hl-new-chat:hover { background: #232a25; }
+.hl-new-chat:active { transform: scale(0.98); }
+
+.hl-section {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 4px 0;
+  margin-top: 6px;
+}
+.hl-section-label { font-size: 11px; font-weight: 600; color: #9aa39c; }
+.hl-section-add {
+  display: flex; align-items: center; justify-content: center;
+  width: 20px; height: 20px; border-radius: 6px;
+  color: #9aa39c; border: 1px solid #e4e6e2;
+}
+.hl-section-add:hover { background: #f0f1ee; color: #1d2420; }
+.hl-empty { font-size: 11.5px; color: #b3bab2; padding: 2px 4px; }
+
+.hl-user {
+  margin-top: auto;
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 6px 4px;
+  border-top: 1px solid #eceee9;
+}
+.hl-user-av {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(140deg, #7cb798, #4e8a6b);
+  color: #fff; font-size: 13px; font-weight: 700;
+}
+.hl-user-name { font-size: 13px; font-weight: 600; color: #1d2420; }
+
+/* ---- Main ---- */
+.hl-main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.hl-topbar {
+  display: flex; align-items: center;
+  padding: 22px 28px 0;
+}
+.hl-topbar-title { font-size: 13.5px; font-weight: 600; color: #1d2420; }
+
+.hl-crowd {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 60%;
+  pointer-events: none;
+  opacity: 0.9;
+}
+.hl-crowd canvas {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hl-hero {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 24px 90px;
+}
+
+.hl-greeting {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #1d2420;
+}
+.hl-sub { font-size: 13px; color: #7b847d; margin-bottom: 14px; }
+
+.hl-composer {
+  width: min(430px, 100%);
+  background: #ffffff;
+  border: 1px solid #e6e8e4;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(29, 36, 32, 0.08);
+  padding: 12px 12px 10px;
+}
+.hl-textarea {
+  width: 100%;
+  resize: none;
+  border: none; outline: none; background: none;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: #1d2420;
+  padding: 4px 6px 10px;
+}
+.hl-textarea::placeholder { color: #a6aea7; }
+
+.hl-composer-bar {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.hl-model-menu-wrap { position: relative; }
+.hl-model-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 26px; padding: 0 10px;
+  border-radius: 8px;
+  background: #f0f1ed;
+  font-size: 12px; font-weight: 600; color: #3c453f;
+}
+.hl-model-chip:hover,
+.hl-model-chip.open { background: #e8eae5; }
+.hl-model-chip.open svg { transform: rotate(180deg); }
+.hl-model-chip svg { transition: transform var(--transition-fast); }
+
+.hl-model-menu {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  min-width: 230px;
+  background: #ffffff;
+  border: 1px solid #e6e8e4;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(29, 36, 32, 0.14);
+  padding: 5px;
+  z-index: 20;
+}
+.hl-model-item {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+.hl-model-item:hover { background: #f0f1ed; }
+.hl-model-item svg { color: #4e8a6b; flex-shrink: 0; }
+.hl-model-item-main { display: flex; flex-direction: column; gap: 1px; }
+.hl-model-item-name { font-size: 12.5px; font-weight: 700; color: #1d2420; }
+.hl-model-item-desc { font-size: 11px; color: #9aa39c; }
+.hl-model-menu-divider { height: 1px; background: #eceee9; margin: 4px 6px; }
+
+.hl-composer-actions { display: flex; align-items: center; gap: 4px; }
+.hl-icon-btn,
+.hl-composer-actions .github-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 8px;
+  color: #6d7570; background: transparent; border: none;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.hl-icon-btn:hover,
+.hl-composer-actions .github-btn:hover {
+  background: #f0f1ed; color: #1d2420; transform: none;
+}
+
+.hl-send {
+  display: flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 10px;
+  margin-left: 4px;
+  background: #6fae8d;
+  color: #fff;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.hl-send:hover:not(:disabled) { background: #5f9d7d; }
+.hl-send:active:not(:disabled) { transform: scale(0.94); }
+.hl-send:disabled { background: #c6d6cc; cursor: not-allowed; }
+
+.hl-chips {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+  margin-top: 18px;
+}
+.hl-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 34px; padding: 0 14px;
+  border-radius: 10px;
+  background: #e7eae5;
+  font-size: 12.5px; font-weight: 600; color: #3c453f;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+.hl-chip svg { color: #7b847d; }
+.hl-chip:hover { background: #dde1db; transform: translateY(-1px); }
+
+@media (max-width: 760px) {
+  .hl-side { display: none; }
+  .hl-greeting { font-size: 24px; }
+}
