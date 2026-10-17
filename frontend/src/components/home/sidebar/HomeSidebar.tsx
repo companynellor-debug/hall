@@ -12,9 +12,11 @@ interface Props {
   onNewChat: () => void;
   onOpenChat: (chat: Chat) => void;
   onOpenSettings: () => void;
+  mobileOpen: boolean;
+  onCloseMobile: () => void;
 }
 
-export function HomeSidebar({ store, onNewChat, onOpenChat, onOpenSettings }: Props) {
+export function HomeSidebar({ store, onNewChat, onOpenChat, onOpenSettings, mobileOpen, onCloseMobile }: Props) {
   const searchRef = useRef<HTMLInputElement>(null);
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('hall.sidebar.collapsed') === '1');
   const [search, setSearch] = useState('');
@@ -57,7 +59,9 @@ export function HomeSidebar({ store, onNewChat, onOpenChat, onOpenSettings }: Pr
   };
 
   return (
-    <aside className={`hl-side sb${collapsed ? ' collapsed' : ''}`} data-testid="home-sidebar">
+    <>
+    {mobileOpen && <div className="sb-backdrop" onClick={onCloseMobile} data-testid="sb-mobile-backdrop" />}
+    <aside className={`hl-side sb${collapsed ? ' collapsed' : ''}${mobileOpen ? ' mobile-open' : ''}`} data-testid="home-sidebar">
       <div className="hl-brand">
         <button className="sb-logo-btn" onClick={onNewChat} title="Início" data-testid="sb-logo-btn">
           <img src={hallLogo} alt="HALL" className="hl-brand-logo" />
@@ -128,5 +132,6 @@ export function HomeSidebar({ store, onNewChat, onOpenChat, onOpenSettings }: Pr
 
       <UserMenu collapsed={collapsed} onOpenSettings={onOpenSettings} />
     </aside>
+    </>
   );
 }

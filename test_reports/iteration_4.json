@@ -1,0 +1,40 @@
+{
+  "summary": "Frontend-only test of new Home sidebar (Playwright, 1920x1080 + 390px). Working: seed data (Clientes/c1, Fixados c2, Anteriores c3), search filter by title/prompt + clear + Ctrl+K focus + sb-empty, new folder w/ inline focused rename, folder toggle, folder rename/delete (chats return to root), chat rename (Enter commits / Esc cancels), pin/unpin, move to folder / root, delete, menus close on outside click + Escape, chat row opens workspace, collapse to 64px rail (persists after reload; rail search expands+focuses, rail new folder, rail new chat focuses composer), user menu -> settings opens project-settings, localStorage persistence, no console errors. Found and FIXED 4 bugs (see rca).",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "HomeScreen composer -> sidebar", "issue": "FIXED: new chat created from composer (Enter) was never saved/shown under 'Hoje' - state update lost because HomeScreen unmounts in same batch as view->workspace", "selector": "textarea.hl-textarea", "priority": "HIGH"},
+      {"component": "FolderItem menu", "issue": "FIXED: folder ⋯ menu rendered underneath the folder's child chat rows (each .sb-item is a stacking context due to fill-mode animation), so 'Renomear' was not clickable on non-empty folders", "selector": "[data-testid=sb-folder-menu-rename]", "priority": "HIGH"},
+      {"component": "ChatItem menu inside folder", "issue": "FIXED: chat ⋯ menu inside a folder was clipped by .sb-folder-inner overflow:hidden (only 'Renomear' visible)", "selector": "[data-testid=sb-menu-delete]", "priority": "HIGH"},
+      {"component": "FolderItem inline rename", "issue": "FIXED: typing a SPACE in folder rename input (input is nested inside the toggle <button>) triggered the toggle and collapsed the folder", "selector": "[data-testid^=sb-folder-rename-input-]", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Home @390px", "issues": ["Sidebar is fully hidden on mobile (<=760px) with no hamburger/drawer toggle - chats/folders are unreachable on mobile. No horizontal overflow otherwise."]},
+      {"screen": "Sidebar", "issues": ["A pinned chat inside a folder shows the pin icon but stays in the folder (not under Fixados) - may be confusing", "With .sb-folder-inner now overflow:visible when open, content may briefly overflow during the 260ms expand animation; consider toggling overflow after transitionend"]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Add a mobile drawer/hamburger to access the sidebar at <=760px",
+    "Optional: move InlineEdit out of the <button> (input inside button is invalid HTML) instead of relying on the editing guard",
+    "Optional: decide UX for pinned chats inside folders",
+    "Note: opening a chat (sb-chat-open) calls onCreate(prompt) which derives project name from the first 3 words of the prompt - no real chat/project identity is restored"
+  ],
+  "critical_code_review_comments": [
+    "InlineEdit: Enter commits then unmount/blur may call commit again (harmless now)",
+    "Seed createdAt uses Date.now()-2h/5h; near midnight seeded 'today' chats can fall into 'Anteriores'",
+    "load() trusts JSON shape from localStorage without validation"
+  ],
+  "updated_files": [
+    "/app/frontend/src/components/home/sidebar/useSidebarStore.ts (addChat persists synchronously to localStorage)",
+    "/app/frontend/src/components/home/sidebar/FolderItem.tsx (toggle ignored while editing)",
+    "/app/frontend/src/components/home/sidebar/sidebar.css (.sb-item.menu-open z-index:30; .sb-folder-body.open .sb-folder-inner overflow:visible)"
+  ],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100% after fixes (4 bugs fixed by tester, 1 mobile design gap open)"},
+  "seed_data_creation": "None - uses built-in seed; clear localStorage keys hall.sidebar.v1 and hall.sidebar.collapsed for clean state",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Wait 4.5s after load for intro splash. Hover row before clicking sb-chat-menu-{id}. All sidebar flows verified after fixes in iteration 4.",
+  "rca of the issue": "1) Composer new chat lost: store.addChat setState + App setView('workspace') batch together; HomeScreen unmounts so queued update and the persist useEffect never run. Fix: write localStorage synchronously in addChat. 2) Folder menu under children: .sb-item has animation sbIn with fill-mode both on transform -> creates stacking context per row; later rows paint over z-index:40 menu. Fix: raise .sb-item.menu-open z-index. 3) Menu clipped: .sb-folder-inner overflow:hidden (needed for grid collapse). Fix: overflow visible when open. 4) Space toggles folder: input nested in button; space keyup activates parent button. Fix: guard toggle with !editing."
+}

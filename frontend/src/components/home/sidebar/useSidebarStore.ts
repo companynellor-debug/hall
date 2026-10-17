@@ -64,6 +64,8 @@ export function useSidebarStore() {
 
   const addChat = useCallback((prompt: string) => {
     const chat: Chat = { id: uid(), title: titleFrom(prompt), prompt, folderId: null, pinned: false, createdAt: Date.now() };
+    const cur = load();
+    localStorage.setItem(KEY, JSON.stringify({ ...cur, chats: [chat, ...cur.chats] }));
     setState((s) => ({ ...s, chats: [chat, ...s.chats] }));
     return chat;
   }, []);

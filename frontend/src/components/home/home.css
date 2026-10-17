@@ -256,7 +256,6 @@
 .hl-chip:hover { background: #dde1db; transform: translateY(-1px); }
 
 @media (max-width: 760px) {
-  .hl-side { display: none; }
   .hl-greeting { font-size: 24px; }
 }
 

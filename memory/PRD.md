@@ -71,3 +71,8 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 ## 2026-06 — Intro animada
 - `components/home/IntroSplash.tsx` (motion/react): logo grande entra em 3D (rotateX/Y + blur + scale), depois zoom no olho direito (transform-origin 19.8% 53%) que vira "portal" revelando a home; ~3s, clique pula para o zoom, respeita prefers-reduced-motion. Montado em `App.tsx` (estado showIntro).
 - [2026-06] Logo da home com flutuação contínua sutil (CSS keyframes hlLogoFloat, 6s, só transform; desliga com prefers-reduced-motion).
+
+## 2026-06 — Menu lateral da home funcional (frontend, localStorage)
+- `components/home/sidebar/*`: HomeSidebar, ChatItem, FolderItem, UserMenu, InlineEdit, usePopover, useSidebarStore (localStorage `hall.sidebar.v1`, seed com 3 chats + pasta "Clientes").
+- Recolher/expandir (rail de ícones, persistido), busca com Ctrl+K/limpar/Esc, Novo chat, pastas (criar/renomear inline/excluir/abrir-fechar animado, contador), chats agrupados Fixados/Hoje/Anteriores com menu ⋯ (renomear, fixar, mover para pasta, tirar da pasta, excluir), enviar prompt cria chat, clicar no chat abre o workspace, menu da conta (Configurações abre settings; Plano/Atalhos/Sair são visuais).
+- Correções do testing_agent (iteration_4): chat criado pelo composer agora persiste; z-index do menu ⋯; menu dentro de pasta não corta; espaço no rename da pasta não fecha. Mobile (≤760px): botão de menu no topo abre o sidebar como gaveta com backdrop.

@@ -34,6 +34,7 @@ export function HomeScreen({ onCreate, onImportGithub, onOpenSettings }: HomeScr
   const modelMenuRef = useRef<HTMLDivElement>(null);
   const [prompt, setPrompt] = useState('');
   const store = useSidebarStore();
+  const [mobileNav, setMobileNav] = useState(false);
   const [modelMenuOpen, setModelMenuOpen] = useState(false);
 
   // Fecha o menu de modelo ao clicar fora
@@ -117,7 +118,9 @@ export function HomeScreen({ onCreate, onImportGithub, onOpenSettings }: HomeScr
         {/* Sidebar */}
         <HomeSidebar
           store={store}
-          onNewChat={newChat}
+          onNewChat={() => { setMobileNav(false); newChat(); }}
+          mobileOpen={mobileNav}
+          onCloseMobile={() => setMobileNav(false)}
           onOpenChat={(chat) => onCreate(chat.prompt)}
           onOpenSettings={onOpenSettings}
         />
@@ -125,6 +128,9 @@ export function HomeScreen({ onCreate, onImportGithub, onOpenSettings }: HomeScr
         {/* Main */}
         <main className="hl-main" role="main">
           <div className="hl-topbar">
+            <button className="hl-menu-btn" onClick={() => setMobileNav(true)} aria-label="Abrir menu" data-testid="home-mobile-menu-btn">
+              <Icon name="menu" size={17} />
+            </button>
             <span className="hl-topbar-title" data-testid="home-topbar-title">Novo chat</span>
           </div>
 

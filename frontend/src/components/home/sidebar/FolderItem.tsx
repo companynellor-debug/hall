@@ -21,7 +21,7 @@ export function FolderItem({ folder, count, store, editing, setEditing, forceOpe
   return (
     <div className="sb-folder" data-testid={`sb-folder-${folder.id}`}>
       <div className={`sb-item${menu.open ? ' menu-open' : ''}`} ref={menu.ref}>
-        <button className="sb-item-main" onClick={() => store.patchFolder(folder.id, { open: !folder.open })} data-testid={`sb-folder-toggle-${folder.id}`}>
+        <button className="sb-item-main" onClick={() => !editing && store.patchFolder(folder.id, { open: !folder.open })} data-testid={`sb-folder-toggle-${folder.id}`}>
           <ChevronRight size={12} className={`sb-chev${open ? ' open' : ''}`} />
           {open ? <FolderOpen size={13} className="sb-item-ic" /> : <FolderIc size={13} className="sb-item-ic" />}
           {editing ? (
