@@ -13,6 +13,7 @@ function App() {
   const [view, setView] = useState<View>('home');
   const [projectName, setProjectName] = useState('');
   const [projectId, setProjectId] = useState('');
+  const [initialPrompt, setInitialPrompt] = useState('');
   const [settingsSection, setSettingsSection] = useState<SectionId>('overview');
   const [showIntro, setShowIntro] = useState(true);
   const hideIntro = useCallback(() => setShowIntro(false), []);
@@ -27,6 +28,7 @@ function App() {
     const match = url.match(/github\.com\/([^/]+)\/([^/]+)/);
     const repoName = match ? match[2].replace(/\.git$/, '') : 'Imported Project';
     setProjectName(repoName);
+    setInitialPrompt('');
     setProjectId(repoName.toLowerCase().replace(/\s+/g, '-'));
     setView('workspace');
   };
@@ -35,12 +37,14 @@ function App() {
     const words = desc.replace(/[^a-zA-Z0-9\sÀ-ÿ]/g, '').trim().split(/\s+/).slice(0, 3).join(' ');
     const projectName = words || 'Novo Projeto';
     setProjectName(projectName);
+    setInitialPrompt(desc);
     setProjectId(projectName.toLowerCase().replace(/\s+/g, '-'));
     setView('workspace');
   };
 
   const handleOpenSettings = (section: SectionId = 'overview') => {
     setSettingsSection(section);
+    setInitialPrompt('');
     setView('settings');
   };
 
@@ -60,6 +64,8 @@ function App() {
         />
       ) : (
         <ProjectWorkspace
+          key={projectId}
+          initialPrompt={initialPrompt}
           onBack={handleBackToHome}
           projectName={projectName}
           onOpenSettings={handleOpenSettings}

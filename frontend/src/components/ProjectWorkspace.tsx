@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
+import './workspace.css';
 import { WorkspaceLayout } from './WorkspaceLayout';
 import { Icon, type IconName } from './ui/Icon';
 import type { SectionId } from './settings/data';
-import { HallMascot } from './HallMascot';
 import hallMascot from '../assets/hall-mascot.png';
 
 interface ProjectWorkspaceProps {
   onBack: () => void;
   projectName: string;
+  initialPrompt?: string;
   onOpenSettings: (section?: SectionId) => void;
 }
 
@@ -50,7 +52,7 @@ function NavGlyph({ name }: { name: string }) {
   return <svg {...p}><circle cx="9" cy="8" r="3" /><path d="M3 20a6 6 0 0 1 12 0" /><circle cx="17" cy="9" r="2.3" /><path d="M16 20a5 5 0 0 1 5-5" /></svg>;
 }
 
-export function ProjectWorkspace({ onBack, projectName, onOpenSettings }: ProjectWorkspaceProps) {
+export function ProjectWorkspace({ onBack, projectName, initialPrompt, onOpenSettings }: ProjectWorkspaceProps) {
   const display = projectName || 'Nellor';
   const initial = display.charAt(0).toUpperCase();
 
@@ -58,6 +60,9 @@ export function ProjectWorkspace({ onBack, projectName, onOpenSettings }: Projec
   const [chatTab, setChatTab] = useState<'chat' | 'tarefas'>('chat');
   const [previewTab, setPreviewTab] = useState<PvTab>('preview');
   const [rail, setRail] = useState<RailId>('changes');
+  const [sideCollapsed, setSideCollapsed] = useState(() => localStorage.getItem('hall.ws.side') === '1');
+
+  useEffect(() => localStorage.setItem('hall.ws.side', sideCollapsed ? '1' : '0'), [sideCollapsed]);
 
   const selectNav = (id: WsNav) => {
     setNav(id);
@@ -103,17 +108,30 @@ export function ProjectWorkspace({ onBack, projectName, onOpenSettings }: Projec
 
       <div className="ws-content">
         {/* Sidebar esquerda */}
-        <nav className="ws-side" data-testid="ws-side">
+        <nav className={`ws-side${sideCollapsed ? ' collapsed' : ''}`} data-testid="ws-side">
+          <button
+            className="ws-side-handle"
+            onClick={() => setSideCollapsed((c) => !c)}
+            aria-label={sideCollapsed ? 'Mostrar menu lateral' : 'Esconder menu lateral'}
+            title={sideCollapsed ? 'Mostrar menu lateral' : 'Esconder menu lateral'}
+            data-testid="ws-side-handle"
+          >
+            <span className="ws-side-handle-grip" />
+          </button>
           <div className="ws-side-head">
-            <button className="ws-project" data-testid="ws-project-switcher">
+            <button className="ws-side-toggle" onClick={() => setSideCollapsed((c) => !c)} aria-label={sideCollapsed ? 'Expandir menu' : 'Recolher menu'} title={sideCollapsed ? 'Expandir menu' : 'Recolher menu'} data-testid="ws-side-toggle">
+              {sideCollapsed ? <PanelLeftOpen size={16} /> : <PanelLeftClose size={16} />}
+              <span className="ws-side-text">Recolher menu</span>
+            </button>
+            <button className="ws-project" title={display} data-testid="ws-project-switcher">
               <span className="ws-project-av">{initial}</span>
-              <span className="ws-project-info">
+              <span className="ws-project-info ws-side-text">
                 <span className="ws-project-name">{display}</span>
                 <span className="ws-project-status">Projeto ativo</span>
               </span>
               <Icon name="chevron-down" size={13} />
             </button>
-            <button className="ws-branch" data-testid="ws-branch-switcher">
+            <button className="ws-branch ws-side-hide" data-testid="ws-branch-switcher">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="6" cy="6" r="2.2" /><circle cx="6" cy="18" r="2.2" /><circle cx="18" cy="8" r="2.2" />
                 <path d="M6 8.2v7.6M18 10.2c0 2.8-2.2 4.4-5.5 4.4" />
@@ -128,24 +146,26 @@ export function ProjectWorkspace({ onBack, projectName, onOpenSettings }: Projec
                 key={n.id}
                 className={`ws-side-item${nav === n.id ? ' active' : ''}`}
                 onClick={() => selectNav(n.id)}
+                title={n.label}
                 data-testid={`side-${n.id}`}
               >
                 <Icon name={n.icon} size={17} />
-                {n.label}
+                <span className="ws-side-text">{n.label}</span>
               </button>
             ))}
           </div>
           <div className="ws-side-group">
-            <span className="ws-side-label">Configurações</span>
+            <span className="ws-side-label ws-side-text">Configurações</span>
             {SIDE_SETTINGS.map((s) => (
               <button
                 key={s.label}
                 className="ws-side-item"
                 onClick={() => onOpenSettings(s.id)}
+                title={s.label}
                 data-testid={`side-settings-${s.label.toLowerCase()}`}
               >
                 <Icon name={s.icon} size={17} />
-                {s.label}
+                <span className="ws-side-text">{s.label}</span>
               </button>
             ))}
           </div>
@@ -189,6 +209,7 @@ export function ProjectWorkspace({ onBack, projectName, onOpenSettings }: Projec
 
           <WorkspaceLayout
             projectName={display}
+            initialPrompt={initialPrompt}
             chatTab={chatTab}
             onChatTabChange={(t) => { setChatTab(t); setNav(t); }}
             previewTab={previewTab}

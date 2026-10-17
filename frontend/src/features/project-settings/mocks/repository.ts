@@ -1,28 +1,13 @@
 import { delay, generateId } from '../utils/helpers';
 import type { ProjectSettingsRepository } from '../repositories';
 import type { AvailableModel, ProjectSettings } from '../types';
+import { getProviderMeta } from '../providerCatalog';
 
 /* ===================== Catálogos do produto (não são dados do projeto) ===================== */
 
-const PROVIDER_CATALOG: Record<string, { displayName: string; description: string; models: AvailableModel[] }> = {
-  nvidia: {
-    displayName: 'NVIDIA',
-    description: 'Modelos Nemotron, infraestrutura GPU.',
-    models: [
-      { id: 'nemotron', providerId: 'nvidia', name: 'nemotron', displayName: 'Nemotron', enabled: true, capabilities: ['coding', 'reasoning'] },
-    ],
-  },
-  openrouter: {
-    displayName: 'OpenRouter',
-    description: 'Acesso a múltiplos modelos (DeepSeek, Qwen, GLM, Claude).',
-    models: [
-      { id: 'deepseek', providerId: 'openrouter', name: 'deepseek', displayName: 'DeepSeek', enabled: true, capabilities: ['coding', 'reasoning'] },
-      { id: 'glm-5', providerId: 'openrouter', name: 'glm-5', displayName: 'GLM-5', enabled: true, capabilities: ['coding', 'general'] },
-      { id: 'qwen', providerId: 'openrouter', name: 'qwen', displayName: 'Qwen', enabled: true, capabilities: ['coding', 'multilingual'] },
-      { id: 'claude-sonnet', providerId: 'openrouter', name: 'claude-sonnet', displayName: 'Claude Sonnet', enabled: true, capabilities: ['coding', 'reasoning', 'analysis'] },
-      { id: 'gpt-4', providerId: 'openrouter', name: 'gpt-4', displayName: 'GPT-4', enabled: true, capabilities: ['coding', 'reasoning', 'general'] },
-    ],
-  },
+const modelsFor = (providerKey: string, metadata?: Record<string, unknown>): AvailableModel[] => {
+  const names = (getProviderMeta(providerKey)?.models ?? (metadata?.models as string[] | undefined) ?? []);
+  return names.map((n) => ({ id: `${providerKey}:${n}`, providerId: providerKey, name: n, displayName: n, enabled: true }));
 };
 
 const INTEGRATION_CATALOG: Record<string, { displayName: string; description: string; category: string }> = {
@@ -93,7 +78,7 @@ export const mockProjectSettingsRepository: ProjectSettingsRepository = {
     const cached = getOrCreateProject(projectId, 'Novo Projeto');
     return cached.providers
       .filter((p) => p.status === 'connected')
-      .flatMap((p) => PROVIDER_CATALOG[p.providerKey]?.models ?? []);
+      .flatMap((p) => modelsFor(p.providerKey, p.metadata));
   },
 
   async updateProject(projectId: string, input: any) {
@@ -152,14 +137,14 @@ export const mockProjectSettingsRepository: ProjectSettingsRepository = {
   async connectProvider(projectId: string, input: any) {
     await delay(500);
     const cached = getOrCreateProject(projectId, 'Novo Projeto');
-    const catalog = PROVIDER_CATALOG[input.providerKey];
+    const meta = getProviderMeta(input.providerKey);
     const provider = {
       id: generateId(),
       projectId,
       providerKey: input.providerKey,
-      displayName: catalog?.displayName ?? input.providerKey,
+      displayName: meta?.name ?? (input.metadata?.label as string) ?? input.providerKey,
       status: 'connected' as const,
-      capabilities: catalog?.models.map((m) => m.displayName),
+      capabilities: modelsFor(input.providerKey, input.metadata).map((m) => m.displayName),
       connectedAt: new Date().toISOString(),
       metadata: input.metadata,
     };

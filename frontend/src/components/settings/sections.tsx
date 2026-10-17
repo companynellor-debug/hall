@@ -12,11 +12,12 @@ import {
   SettingsToggle, Btn, type BadgeTone,
 } from './ui';
 import {
-  AGENTS, WORKSPACES, STATUSES, PROVIDERS, INTEGRATIONS,
+  AGENTS, WORKSPACES, STATUSES,
   type SettingsForm, type AgentKey, type LogLevel,
 } from './data';
 import type { UpdateProjectInput, UpdateAgentInput, AgentRole, AvailableModel, ProjectHealth, HealthStatus } from '../../features/project-settings/types';
 import { ConnectionCard } from './ConnectionCard';
+import { ProvidersPanel } from './ProvidersPanel';
 import { IntegrationLogo } from './IntegrationLogo';
 import { INTEGRATION_DOMAINS, INTEGRATION_CATEGORIES_DOMAIN } from './integrationDomains';
 import type { IntegrationDomain } from './integrationDomains';
@@ -106,35 +107,6 @@ function HealthRow({ title, desc, status }: { title: string; desc: string; statu
   );
 }
 
-/* =================== Provider Card =================== */
-function ProviderCard({ p, connectProvider, disconnectProvider, settings }: { p: { id: string; name: string; description: string; icon: string }; connectProvider: (input: any) => Promise<void>; disconnectProvider: (providerKey: string) => Promise<void>; settings: { providers: Array<{ providerKey: string; status: string }> } }) {
-  const [busy, setBusy] = useState(false);
-  const provider = settings.providers.find(pv => pv.providerKey === p.id);
-  const connected = provider?.status === 'connected';
-
-  const handleConnect = useCallback(async () => { setBusy(true); try { await connectProvider({ providerKey: p.id }); } finally { setBusy(false); } }, [connectProvider, p.id]);
-  const handleDisconnect = useCallback(async () => { setBusy(true); try { await disconnectProvider(p.id); } finally { setBusy(false); } }, [disconnectProvider, p.id]);
-
-  return (
-    <div className="st-provider" data-testid={`provider-${p.id}`}>
-      <div className="st-provider-top">
-        <span className="st-brand">{<BrandIcon name={p.icon} size={22} />}</span>
-        <div className="st-provider-main">
-          <div className="st-provider-name">{p.name}</div>
-          <span className={`st-conn ${connected ? 'ok' : ''}`}><span className="st-badge-dot" />{connected ? 'Conectado' : 'Não conectado'}</span>
-        </div>
-        {connected && <button className="st-more" aria-label="Mais opções"><MoreHorizontal size={16} /></button>}
-      </div>
-      <p className="st-provider-desc">{p.description}</p>
-      <div className="st-provider-actions">
-        <Btn variant={connected ? 'secondary' : 'primary'} disabled={busy} onClick={connected ? handleDisconnect : handleConnect} data-testid={`provider-action-${p.id}`}>
-          {busy ? 'Aguarde...' : connected ? 'Desconectar' : 'Conectar'}
-        </Btn>
-      </div>
-    </div>
-  );
-}
-
 /* =================== OVERVIEW =================== */
 export function OverviewSection(props: SectionProps) {
   const { form, update, settings, availableModels, updateAgent, connectProvider, disconnectProvider, connectIntegration, disconnectIntegration } = props;
@@ -198,11 +170,9 @@ export function OverviewSection(props: SectionProps) {
           <SettingsCard
             icon={<Puzzle size={18} />}
             title="Model Providers"
-            subtitle="Conecte provedores de modelos para habilitar agentes."
+            subtitle="Conecte quantos provedores quiser — os modelos aparecem nos agentes."
           >
-            <div className="st-provider-grid">
-              {PROVIDERS.map((p) => <ProviderCard key={p.id} p={p} connectProvider={connectProvider} disconnectProvider={disconnectProvider} settings={settings} />)}
-            </div>
+            <ProvidersPanel providers={settings.providers} connectProvider={connectProvider} disconnectProvider={disconnectProvider} />
           </SettingsCard>
         </div>
       </div>
