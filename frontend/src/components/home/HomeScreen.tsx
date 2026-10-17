@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from '../ui/Icon';
 import { CrowdCanvas } from '../ui/CrowdCanvas';
 import { ImportGithub } from './ImportGithub';
-import hallLogo from '../../assets/hall-logo.png';
+import hallLogo from '../../assets/hall-mascot.png';
+import hallLogoFull from '../../assets/hall-logo-full.png';
 import './home.css';
 
 interface HomeScreenProps {
@@ -115,7 +116,6 @@ export function HomeScreen({ onCreate, onImportGithub, onOpenSettings }: HomeScr
         <aside className="hl-side">
           <div className="hl-brand">
             <img src={hallLogo} alt="HALL" className="hl-brand-logo" />
-            <span className="hl-brand-name">HALL</span>
             <button className="hl-side-collapse" aria-label="Recolher menu">
               <Icon name="chevron-left" size={14} />
             </button>
@@ -172,6 +172,7 @@ export function HomeScreen({ onCreate, onImportGithub, onOpenSettings }: HomeScr
           </div>
 
           <div className="hl-hero">
+            <img src={hallLogoFull} alt="HALL — Build without limits" className="hl-hero-logo" data-testid="home-hero-logo" />
             <h1 className="hl-greeting">{greeting}, Nakor</h1>
             <p className="hl-sub">Como posso ajudar você hoje?</p>
 

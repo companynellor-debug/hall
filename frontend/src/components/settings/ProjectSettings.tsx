@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { ChevronDown, MoreHorizontal, ExternalLink } from 'lucide-react';
 import { Icon } from '../ui/Icon';
-import hallLogo from '../../assets/hall-logo.png';
+import hallLogo from '../../assets/hall-mascot.png';
 import { SettingsSidebar } from './SettingsSidebar';
 import { Btn } from './ui';
 import { makeDefaultForm, type SectionId, type SettingsForm } from './data';
@@ -80,7 +80,6 @@ export function ProjectSettings({ projectId, projectName, initialSection = 'over
           <div className="ws-topbar-left">
             <button className="ws-brand" onClick={onHome} aria-label="Início" data-testid="st-home-btn">
               <img src={hallLogo} className="ws-brand-logo" alt="HALL" />
-              <span className="ws-brand-word">HALL</span>
             </button>
             <nav className="ws-nav">
               {NAV.map((n, i) => (
@@ -110,7 +109,6 @@ export function ProjectSettings({ projectId, projectName, initialSection = 'over
           <div className="ws-topbar-left">
             <button className="ws-brand" onClick={onHome} aria-label="Início" data-testid="st-home-btn">
               <img src={hallLogo} className="ws-brand-logo" alt="HALL" />
-              <span className="ws-brand-word">HALL</span>
             </button>
             <nav className="ws-nav">
               {NAV.map((n, i) => (
@@ -191,7 +189,6 @@ export function ProjectSettings({ projectId, projectName, initialSection = 'over
         <div className="ws-topbar-left">
           <button className="ws-brand" onClick={onHome} aria-label="Início" data-testid="st-home-btn">
             <img src={hallLogo} className="ws-brand-logo" alt="HALL" />
-            <span className="ws-brand-word">HALL</span>
           </button>
           <nav className="ws-nav">
             {NAV.map((n, i) => (

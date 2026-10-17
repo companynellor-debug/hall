@@ -62,3 +62,8 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 - Passado prop `settings` faltante para as seções (crash em `providers`)
 - useProjectSettings: upsertEnvVar/deleteEnvVar agora usam wrappers corretos (ZodError) e `settings` expõe o draft
 - Testado: iteration_3 (13/13 PASS) — dados ainda MOCKADOS (mockProjectSettingsRepository)
+
+## 2026-06 — Troca de logos
+- Home: logo completa "HALL — Build without limits" (`assets/hall-logo-full.png`, fundo transparente) acima da saudação.
+- Menu lateral da home + topbar do workspace/configurações: mascote blob preto (`assets/hall-mascot.png`), texto "HALL" removido.
+- `public/assets/hall/hall-idle.png` (faltava) criado com o novo mascote.

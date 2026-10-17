@@ -2538,7 +2538,7 @@ button:focus-visible {
 }
 .ws-topbar-left { display: flex; align-items: center; gap: var(--space-5); }
 .ws-brand { display: flex; align-items: center; gap: var(--space-2); }
-.ws-brand-logo { height: 26px; width: auto; image-rendering: pixelated; filter: drop-shadow(0 0 8px rgba(78,138,107,0.35)); }
+.ws-brand-logo { height: 28px; width: auto; display: block; }
 .ws-brand-word { font-weight: 800; font-size: 15px; letter-spacing: 0.04em; color: var(--color-text-primary); }
 
 .ws-nav { display: flex; align-items: center; gap: var(--space-1); }

@@ -3,7 +3,7 @@ import { WorkspaceLayout } from './WorkspaceLayout';
 import { Icon, type IconName } from './ui/Icon';
 import type { SectionId } from './settings/data';
 import { HallMascot } from './HallMascot';
-import logoIcon from '../../public/assets/hall/logo-icon.png';
+import hallMascot from '../assets/hall-mascot.png';
 
 interface ProjectWorkspaceProps {
   onBack: () => void;
@@ -74,8 +74,7 @@ export function ProjectWorkspace({ onBack, projectName, onOpenSettings }: Projec
       <header className="ws-topbar">
         <div className="ws-topbar-left">
           <button className="ws-brand" onClick={onBack} aria-label="Voltar ao início" data-testid="ws-home-btn">
-            <img src="/assets/hall/logo-icon.png" className="ws-brand-logo" alt="HALL" style={{ height: '24px' }} />
-            <span className="ws-brand-word">HALL</span>
+            <img src={hallMascot} className="ws-brand-logo" alt="HALL" />
           </button>
           <nav className="ws-nav">
             {TOP_NAV.map((n, i) => (
