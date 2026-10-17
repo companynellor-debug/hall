@@ -35,5 +35,5 @@
   "seed_data_creation": "none - mockProjectSettingsRepository in-browser",
   "retest_needed": false,
   "should_main_agent_self_test": false,
-  "context_for_next_testing_agent": "Vite+React+TS on port 3000. Public URL https://9c641df3-1da3-4ff3-9902-664ed509e18f.preview.emergentagent.com. Project Settings is reachable via Home 3-dot button[aria-label='Configurações do projeto'] OR by sending a prompt from Home and clicking [data-testid='ws-settings-btn']. The black-screen regression is confirmed fixed. Non-fatal ZodError appears when adding env vars - investigate if revisited."
+  "context_for_next_testing_agent": "Vite+React+TS on port 3000. Public URL https://hall-preview.preview.emergentagent.com. Project Settings is reachable via Home 3-dot button[aria-label='Configurações do projeto'] OR by sending a prompt from Home and clicking [data-testid='ws-settings-btn']. The black-screen regression is confirmed fixed. Non-fatal ZodError appears when adding env vars - investigate if revisited."
 }
