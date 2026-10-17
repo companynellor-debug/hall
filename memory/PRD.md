@@ -70,3 +70,4 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 
 ## 2026-06 — Intro animada
 - `components/home/IntroSplash.tsx` (motion/react): logo grande entra em 3D (rotateX/Y + blur + scale), depois zoom no olho direito (transform-origin 19.8% 53%) que vira "portal" revelando a home; ~3s, clique pula para o zoom, respeita prefers-reduced-motion. Montado em `App.tsx` (estado showIntro).
+- [2026-06] Logo da home com flutuação contínua sutil (CSS keyframes hlLogoFloat, 6s, só transform; desliga com prefers-reduced-motion).

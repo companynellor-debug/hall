@@ -277,3 +277,19 @@
   border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,0.18), transparent);
   pointer-events: none;
 }
+
+/* ---- Hero logo idle motion ---- */
+.hl-hero-logo {
+  animation: hlLogoFloat 6s ease-in-out infinite;
+  will-change: transform;
+  transform-origin: 50% 60%;
+}
+@keyframes hlLogoFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  25% { transform: translateY(-5px) rotate(-0.8deg) scale(1.01); }
+  50% { transform: translateY(-8px) rotate(0deg) scale(1.015); }
+  75% { transform: translateY(-4px) rotate(0.8deg) scale(1.01); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hl-hero-logo { animation: none; }
+}
