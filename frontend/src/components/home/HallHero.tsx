@@ -3,8 +3,9 @@ import { Textarea } from '../ui/Textarea';
 import { Icon } from '../ui/Icon';
 import { ImportGithub } from './ImportGithub';
 import { OrbitingCirclesGlobe } from './OrbitingCirclesGlobe';
-import WireframeForms from '../ui/wireframe-forms';
 import { ShinyButton } from '../ui/ShinyButton';
+import { HallMascot } from '../HallMascot';
+
 
 const PLACEHOLDERS = [
   'Ex.: um SaaS para gerenciar meus clientes, com autenticação e um painel moderno…',
@@ -77,15 +78,7 @@ export function HallHero({ onSubmit, onImportGithub, onOpenSettings }: { onSubmi
         style={{ width: '200px', height: '200px', marginBottom: 'var(--space-6)', overflow: 'hidden' }}
         aria-hidden="true"
       >
-        <WireframeForms
-          variant="sphere"
-          mode="dark"
-          speed={1}
-          size={1}
-          length={1}
-          density={1}
-          opacity={1}
-        />
+        <HallMascot state="idle" size={200} />
       </div>
 
       <h1 id="hero-title" className="hero-title">What are you building today?</h1>

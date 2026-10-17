@@ -1,3 +1,4 @@
+import logoIcon from '../../../public/assets/hall/logo-icon.png';
 import type { ReactNode } from 'react'
 import { sideData, railItems, type RailId } from '../data/workspace'
 import {
@@ -40,7 +41,10 @@ export function Sidebar({ active, onSelect, activePath, tree, width }: Props) {
             </button>
           </div>
           <div className="explorer-body">
-            <div className="explorer-section">Hall</div>
+            <div className="explorer-section">
+              <img src={logoIcon} alt="HALL" style={{ height: '16px', display: 'inline-block', verticalAlign: 'middle', marginRight: '8px' }} />
+              Hall
+            </div>
             <FileTree nodes={tree.root} activePath={activePath} onOpen={tree.open} />
           </div>
           <div className="explorer-footer">

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { Icon } from './ui/Icon';
 import { ShinyButton } from './ui/ShinyButton';
+import { HallMascot } from './HallMascot';
+import { resolveHallMascotState } from '../features/mascot/stateMapping';
 import hallLogo from '../assets/hall-logo.png';
 
 type Tab = 'chat' | 'tarefas';
@@ -84,6 +86,21 @@ export function ChatPane({ activeTab, onTabChange }: ChatPaneProps = {}) {
   const setStage = (id: number, stage: number) =>
     setMessages((m) => m.map((msg) => (msg.id === id && msg.kind === 'run' ? { ...msg, stage } : msg)));
 
+  const getMascotState = () => {
+    if (busy) {
+      // Simplificação do mapeamento com base na stage da mensagem ativa
+      const activeRun = messages.find(m => m.kind === 'run' && m.stage < 4);
+      if (activeRun && activeRun.kind === 'run') {
+        if (activeRun.stage === 0) return 'thinking';
+        if (activeRun.stage === 1) return 'thinking';
+        if (activeRun.stage === 2) return 'building';
+        if (activeRun.stage === 3) return 'building';
+      }
+      return 'listening';
+    }
+    return 'idle';
+  };
+
   const toggleExpand = (id: number) =>
     setMessages((m) => m.map((msg) => (msg.id === id && msg.kind === 'run' ? { ...msg, expanded: !msg.expanded } : msg)));
 
@@ -138,7 +155,7 @@ export function ChatPane({ activeTab, onTabChange }: ChatPaneProps = {}) {
         <div className="ws-chat-scroll" ref={scrollRef} data-testid="chat-scroll">
           {messages.length === 0 && (
             <div className="ws-chat-empty" data-testid="chat-empty">
-              <img src={hallLogo} alt="HALL" className="ws-chat-empty-logo" />
+              <HallMascot state={getMascotState()} size={120} />
               <h3>O que vamos construir?</h3>
               <p>Descreva uma alteração, corrija um problema ou continue desenvolvendo seu projeto.</p>
             </div>
@@ -159,7 +176,12 @@ export function ChatPane({ activeTab, onTabChange }: ChatPaneProps = {}) {
             ) : (
               <div key={m.id} className="ws-msg assistant" data-testid="msg-run">
                 <div className="ws-msg-head">
-                  <span className="ws-msg-av hall"><img src={hallLogo} alt="" /></span>
+                  <span className="ws-msg-av hall">
+                    <HallMascot 
+                      state={m.stage === 0 ? 'thinking' : m.stage < 4 ? 'building' : 'success'} 
+                      size={24} 
+                    />
+                  </span>
                   <span className="ws-msg-name">HALL</span>
                   <span className="ws-msg-time">{m.time}</span>
                 </div>
