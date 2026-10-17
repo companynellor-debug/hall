@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Icon } from '../ui/Icon';
 import { CrowdCanvas } from '../ui/CrowdCanvas';
 import { ImportGithub } from './ImportGithub';
-import hallLogo from '../../assets/hall-mascot.png';
+import { HomeSidebar } from './sidebar/HomeSidebar';
+import { useSidebarStore } from './sidebar/useSidebarStore';
 import hallLogoFull from '../../assets/hall-logo-full.png';
 import './home.css';
 
@@ -32,7 +33,7 @@ export function HomeScreen({ onCreate, onImportGithub, onOpenSettings }: HomeScr
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const modelMenuRef = useRef<HTMLDivElement>(null);
   const [prompt, setPrompt] = useState('');
-  const [search, setSearch] = useState('');
+  const store = useSidebarStore();
   const [modelMenuOpen, setModelMenuOpen] = useState(false);
 
   // Fecha o menu de modelo ao clicar fora
@@ -105,6 +106,7 @@ export function HomeScreen({ onCreate, onImportGithub, onOpenSettings }: HomeScr
     e.preventDefault();
     const text = prompt.trim();
     if (!text) return;
+    store.addChat(text);
     onCreate(text);
     setPrompt('');
   };
@@ -113,54 +115,17 @@ export function HomeScreen({ onCreate, onImportGithub, onOpenSettings }: HomeScr
     <div className="hl-page">
       <div className="hl-shell">
         {/* Sidebar */}
-        <aside className="hl-side">
-          <div className="hl-brand">
-            <img src={hallLogo} alt="HALL" className="hl-brand-logo" />
-            <button className="hl-side-collapse" aria-label="Recolher menu">
-              <Icon name="chevron-left" size={14} />
-            </button>
-          </div>
-
-          <label className="hl-search">
-            <Icon name="search" size={14} />
-            <input
-              type="text"
-              placeholder="Buscar chats"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </label>
-
-          <button className="hl-new-chat" onClick={newChat}>
-            <Icon name="message-square" size={15} />
-            Novo chat
-          </button>
-
-          <div className="hl-section">
-            <span className="hl-section-label">Pastas</span>
-            <button className="hl-section-add" aria-label="Nova pasta">
-              <Icon name="plus" size={13} />
-            </button>
-          </div>
-
-            <div className="hl-section">
-            <span className="hl-section-label">Chats</span>
-            <button className="hl-section-add" aria-label="Novo chat" onClick={newChat}>
-              <Icon name="message-square" size={13} />
-            </button>
-          </div>
-          <p className="hl-empty">Nenhum chat ainda</p>
-
-          <div className="hl-user">
-            <span className="hl-user-av">N</span>
-            <span className="hl-user-name">Nakor</span>
-          </div>
-        </aside>
+        <HomeSidebar
+          store={store}
+          onNewChat={newChat}
+          onOpenChat={(chat) => onCreate(chat.prompt)}
+          onOpenSettings={onOpenSettings}
+        />
 
         {/* Main */}
         <main className="hl-main" role="main">
           <div className="hl-topbar">
-            <span className="hl-topbar-title">Novo chat</span>
+            <span className="hl-topbar-title" data-testid="home-topbar-title">Novo chat</span>
           </div>
 
           <div className="hl-crowd" aria-hidden="true">
