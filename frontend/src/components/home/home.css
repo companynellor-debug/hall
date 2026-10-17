@@ -259,3 +259,21 @@
   .hl-side { display: none; }
   .hl-greeting { font-size: 24px; }
 }
+
+/* ---- Intro splash ---- */
+.intro-splash {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  perspective: 1400px; overflow: hidden; cursor: pointer;
+}
+.intro-splash-logo {
+  width: min(720px, 82vw); height: auto;
+  transform-style: preserve-3d; will-change: transform, opacity;
+  filter: drop-shadow(0 30px 40px rgba(0,0,0,0.12));
+}
+.intro-splash-glow {
+  position: absolute; left: 50%; top: calc(50% + min(150px, 18vw));
+  width: min(420px, 50vw); height: 28px; margin-left: calc(min(420px, 50vw) / -2);
+  border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,0.18), transparent);
+  pointer-events: none;
+}

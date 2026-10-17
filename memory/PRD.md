@@ -67,3 +67,6 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 - Home: logo completa "HALL — Build without limits" (`assets/hall-logo-full.png`, fundo transparente) acima da saudação.
 - Menu lateral da home + topbar do workspace/configurações: mascote blob preto (`assets/hall-mascot.png`), texto "HALL" removido.
 - `public/assets/hall/hall-idle.png` (faltava) criado com o novo mascote.
+
+## 2026-06 — Intro animada
+- `components/home/IntroSplash.tsx` (motion/react): logo grande entra em 3D (rotateX/Y + blur + scale), depois zoom no olho direito (transform-origin 19.8% 53%) que vira "portal" revelando a home; ~3s, clique pula para o zoom, respeita prefers-reduced-motion. Montado em `App.tsx` (estado showIntro).

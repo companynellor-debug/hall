@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
+import { IntroSplash } from './components/home/IntroSplash';
 import { HomeScreen } from './components/home/HomeScreen';
 import { ProjectWorkspace } from './components/ProjectWorkspace';
 import { ProjectSettings } from './components/settings/ProjectSettings';
@@ -13,6 +14,8 @@ function App() {
   const [projectName, setProjectName] = useState('');
   const [projectId, setProjectId] = useState('');
   const [settingsSection, setSettingsSection] = useState<SectionId>('overview');
+  const [showIntro, setShowIntro] = useState(true);
+  const hideIntro = useCallback(() => setShowIntro(false), []);
 
   const handleBackToHome = () => {
     setView('home');
@@ -44,6 +47,7 @@ function App() {
   return (
     <div className="app">
       {view !== 'settings' && <Background />}
+      {showIntro && <IntroSplash onDone={hideIntro} />}
       {view === 'home' ? (
         <HomeScreen onCreate={handleCreateProject} onImportGithub={handleImportGithub} onOpenSettings={handleOpenSettings} />
       ) : view === 'settings' ? (
