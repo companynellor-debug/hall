@@ -79,7 +79,8 @@ export function ProjectWorkspace({ onBack, projectName, initialPrompt, onOpenSet
       <header className="ws-topbar">
         <div className="ws-topbar-left">
           <button className="ws-brand" onClick={onBack} aria-label="Voltar ao início" data-testid="ws-home-btn">
-            <img src={hallMascot} className="ws-brand-logo" alt="HALL" />
+            <img src="/assets/hall/logo-icon.png" className="ws-brand-logo" alt="HALL" style={{ height: '24px', filter: 'drop-shadow(0 0 8px rgba(78, 138, 107, 0.4))' }} />
+            <span className="ws-brand-word" style={{ fontWeight: 800, letterSpacing: '-0.03em' }}>HALL</span>
           </button>
           <nav className="ws-nav">
             {TOP_NAV.map((n, i) => (
