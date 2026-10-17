@@ -76,3 +76,9 @@ UI estilo "builder de apps" (clone visual tipo Lovable/Emergent):
 - `components/home/sidebar/*`: HomeSidebar, ChatItem, FolderItem, UserMenu, InlineEdit, usePopover, useSidebarStore (localStorage `hall.sidebar.v1`, seed com 3 chats + pasta "Clientes").
 - Recolher/expandir (rail de ícones, persistido), busca com Ctrl+K/limpar/Esc, Novo chat, pastas (criar/renomear inline/excluir/abrir-fechar animado, contador), chats agrupados Fixados/Hoje/Anteriores com menu ⋯ (renomear, fixar, mover para pasta, tirar da pasta, excluir), enviar prompt cria chat, clicar no chat abre o workspace, menu da conta (Configurações abre settings; Plano/Atalhos/Sair são visuais).
 - Correções do testing_agent (iteration_4): chat criado pelo composer agora persiste; z-index do menu ⋯; menu dentro de pasta não corta; espaço no rename da pasta não fecha. Mobile (≤760px): botão de menu no topo abre o sidebar como gaveta com backdrop.
+
+## 2026-06 — Settings providers + workspace funcional
+- Providers: catálogo `features/project-settings/providerCatalog.ts` (12 provedores + Personalizado compatível OpenAI). `ProvidersPanel` + `AddProviderModal`: adicionar quantos quiser (busca, chave mascarada c/ mostrar/ocultar, URL base p/ Ollama/custom, modelos custom), trocar chave, testar conexão (simulado), remover, toast. Modelos aparecem nos agentes. MOCK (sem validação real de chave).
+- Workspace: menu lateral recolhível (botão + barra/handle na borda, persistido `hall.ws.side`); prompt da home inicia o build automaticamente.
+- Chat: sugestões, textarea auto-grow, anexos (chips), PLAN gera plano + "Executar plano", BUILD simula etapas, botão parar, copiar/gostei/não gostei/refazer, seletor de modelo, aba Tarefas com histórico.
+- Preview: após build renderiza app gerado (iframe srcDoc, `features/preview/siteTemplate.ts`), versões com voltar/avançar, recarregar, abrir em nova aba (blob), dispositivos com moldura, aba Código mostra HTML com copiar. SIMULADO (sem LLM real).

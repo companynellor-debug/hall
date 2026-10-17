@@ -30,7 +30,7 @@ export function AddProviderModal({ connectedKeys, initialKey, onClose, onSubmit 
   const [q, setQ] = useState('');
   const [apiKey, setApiKey] = useState('');
   const [showKey, setShowKey] = useState(false);
-  const [baseUrl, setBaseUrl] = useState('');
+  const [baseUrl, setBaseUrl] = useState(initialKey === 'ollama' ? 'http://localhost:11434' : '');
   const [label, setLabel] = useState('');
   const [models, setModels] = useState('');
   const [busy, setBusy] = useState(false);

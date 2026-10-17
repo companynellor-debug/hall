@@ -1,0 +1,40 @@
+{
+  "summary": "Frontend-only Playwright testing (1920x1080 + 768px) of the new chat workspace, preview, collapsible workspace sidebar, and Settings > Model Providers. Everything worked: intro splash, home prompt -> workspace auto-build (msg-user/msg-run, Build passou, iframe, v1 de 1, 'Atualizado agora'), busy state (composer-stop, chat-busy, preview-loading), stop -> run-stopped + send re-enabled + no late version, empty-state suggestions fill and focus the composer (reached via GitHub import), PLAN mode -> 5 numbered steps -> plan-execute -> rebuilding overlay -> v2 de 2, pv-back/forward switch the iframe content, copy/like/dislike/retry actions, model picker, Tarefas list (done/done/stopped), device sizes (1196/820/390px), reload, new tab (blob URL), code view + copy, ws-side collapses to a 60px rail (labels hidden, rail items work, handle toggles, saved in localStorage across reload), provider modal (12+custom, search, empty search result), anthropic connect with validation/eye toggle/masked key/toast/agent model options, Ollama (URL prefilled, no key), custom provider validation chain, tile menu test/replace/remove, closing the menu or modal by clicking outside. I found and fixed 2 bugs.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "ChatPane file input", "issue": "FIXED: attachments were never added. The onChange read e.target.files inside a lazy setState updater, but e.target.value='' had already cleared the FileList by the time the updater ran, so 0 chips appeared.", "selector": "[data-testid=composer-file-input]", "priority": "HIGH"},
+      {"component": "AddProviderModal (replace Ollama)", "issue": "FIXED: when opened via provider-menu-replace for Ollama, the base URL field was empty because pick() (the only place that prefills it) never runs for initialKey, so the user had to retype the URL", "selector": "[data-testid=provider-baseurl-input]", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Workspace @768px (tablet)", "issues": ["The preview pane is completely hidden and there is no toggle to switch between chat and preview. ws-side is hidden too, so tablet/mobile users can't see the preview at all."]},
+      {"screen": "Settings providers", "issues": ["Console shows 404s from cdn.simpleicons.org for the openai, groq and together slugs. A fallback to favicon kicks in, but the console is noisy; map these slugs to the favicon directly", "Custom provider tiles have no 'Trocar chave' option (meta is null), so changing their key means remove + re-add", "The 'Trocar chave' title and button are shown for Ollama, which has no key; label them by URL instead", "The test-OK badge (provider-test-ok) stays on the tile after the key is replaced, so it is stale", "Toast timers are not reset: when toasts come quickly, the first timeout hides the second toast early"]},
+      {"screen": "Workspace header", "issues": ["Project name is the first 3 words of the prompt (e.g. 'Landing page para', 'Painel financeiro com'), which reads cut off"]}
+    ]
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Add a chat/preview switch (or stacked layout) for widths <=1024px so the preview can be reached on tablet/mobile",
+    "Avoid simpleicons slugs that return 404 (openai, groq, together)",
+    "Allow key/URL replacement for custom providers and label the Ollama replace flow as 'URL', not 'chave'",
+    "Clear the tile test result after the key is replaced, and reset the toast timer on each flash",
+    "Improve how the project name is derived from the prompt"
+  ],
+  "critical_code_review_comments": [
+    "WorkspaceLayout.onBuildDone calls setIdx inside the setVersions updater (a side effect in an updater). It works now, but it's fragile under StrictMode/concurrent rendering; compute the index outside",
+    "ChatPane.stop() clears ALL timers, including a pending plan timer; plans are force-marked ready, which is fine for now",
+    "ChatPane retry calls startBuild without a user message, so Tarefas shows a duplicate prompt with no matching user bubble (acceptable)",
+    "AddProviderModal replace flow does not prefill an existing custom label/models/baseUrl from stored metadata"
+  ],
+  "updated_files": [
+    "/app/frontend/src/components/ChatPane.tsx (file names read before setState)",
+    "/app/frontend/src/components/settings/AddProviderModal.tsx (baseUrl prefilled for initialKey=ollama)"
+  ],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "100% of requested flows pass after the 2 tester fixes"},
+  "seed_data_creation": "None. Providers are in-memory (mock repository); clear localStorage hall.ws.side for a clean sidebar state",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Wait 4.5s for the splash. Empty chat state is reachable via import-github-btn -> gh-connect-btn -> first gh-repo-*. Use page.expect_file_chooser on composer-attach for attachments. The custom provider tile testid is provider-custom-<base36>. Settings: sb-user-btn -> sb-user-settings on home, or side-settings-geral in the workspace.",
+  "rca of the issue": "1) Attachments: React setState updaters run lazily during render; by then e.target.value='' had reset input.files, so Array.from(e.target.files) was empty. Fix: capture the names synchronously before setState. 2) Ollama replace: the baseUrl default comes only from pick(); the initialKey path sets picked via the useState initializer and skips pick(). Fix: useState initial value depends on initialKey."
+}

@@ -285,7 +285,7 @@ export function ChatPane({ activeTab, onTabChange, initialPrompt, onBuildStart, 
             data-testid="composer-input"
             style={{ minHeight: '48px' }}
           />
-          <input ref={fileRef} type="file" multiple hidden onChange={(e) => { setAttachments((a) => [...new Set([...a, ...Array.from(e.target.files ?? []).map((f) => f.name)])]); e.target.value = ''; }} data-testid="composer-file-input" />
+          <input ref={fileRef} type="file" multiple hidden onChange={(e) => { const names = Array.from(e.target.files ?? []).map((f) => f.name); setAttachments((a) => [...new Set([...a, ...names])]); e.target.value = ''; }} data-testid="composer-file-input" />
           <div className="ws-composer-foot">
             <div className="ws-composer-left">
               <button className="ws-composer-icon" title="Anexar arquivos" aria-label="Anexar" onClick={() => fileRef.current?.click()} data-testid="composer-attach">
